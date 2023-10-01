@@ -1,4 +1,4 @@
-#include "../../lib/algebrick/algebrick.h"
+#include "../../../lib/algebrick/algebrick.h"
 #include <iostream>
 
 int main() {

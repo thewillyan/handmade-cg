@@ -1,8 +1,9 @@
 CXX=clang++
 CXXFLAGS=-Wall -Wextra
 LIB_PATH=../../lib
-SRCS=$(wildcard *.cpp)
+SRCS=$(wildcard src/*.cpp)
 LIBS=$(wildcard $(LIB_PATH)/algebrick/*.cpp)
 
 main: $(SRCS) $(LIB_PATH)
-	$(CXX) $(CXXFLAGS) $(SRCS) $(LIBS) -o main
+	mkdir -p bin
+	$(CXX) $(CXXFLAGS) $(SRCS) $(LIBS) -o bin/algebrick_test
