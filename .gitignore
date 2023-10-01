@@ -1,0 +1,13 @@
+*
+!.gitignore
+
+# unignore some file extenssions
+!*.cpp
+!*.c
+!*.h
+!*.hpp
+!*.md
+
+# unignore makefiles
+Makefile
+makefile
