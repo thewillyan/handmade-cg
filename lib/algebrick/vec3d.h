@@ -1,6 +1,7 @@
+#include <ostream>
+
 #ifndef Algebrick_Vec3d_H
 #define Algebrick_Vec3d_H
-#include <ostream>
 namespace Algebrick {
 
 class Vec3d {

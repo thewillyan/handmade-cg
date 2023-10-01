@@ -18,5 +18,11 @@ int main() {
   Algebrick::Vec3d w = v.norm();
   std::cout << "Normalized v = " << w << std::endl;
   std::cout << "Normalized v lenght: " << w.length() << std::endl;
+
+  Algebrick::Point3d p{1, 1, 3};
+  Algebrick::Point3d q{1, 0, 2};
+  std::cout << "p := " << p << std::endl;
+  std::cout << "q := " << q << std::endl;
+  std::cout << "p - q = " << (p - q) << std::endl;
   return 0;
 }
