@@ -1,5 +1,7 @@
 #include "canvas.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <cstddef>
@@ -21,15 +23,17 @@ Canvas::Canvas(size_t w, size_t h, SDL_Color color)
     : width{w}, height{h}, default_color{color},
       color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
       window{nullptr}, renderer{nullptr} {
+  SDL_Init(SDL_INIT_EVERYTHING);
   SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
 }
 Canvas::Canvas(size_t w, size_t h)
     : width{w}, height{h}, default_color{0, 0, 0, 255},
       color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
       window{nullptr}, renderer{nullptr} {
+  SDL_Init(SDL_INIT_EVERYTHING);
   SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
 };
-Canvas::~Canvas() { SDL_Quit(); }
+Canvas::~Canvas() {}
 
 size_t Canvas::get_width() const { return width; }
 size_t Canvas::get_height() const { return height; }
@@ -42,6 +46,25 @@ void Canvas::fill(SDL_Color c) {
   this->clear();
 }
 void Canvas::clear() { color_map.clear(); };
+
+enum class AppState { Continue, Quit };
+
+AppState keyboard_handler() {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    switch (event.type) {
+    case SDL_QUIT:
+      return AppState::Quit;
+    case SDL_KEYUP:
+      switch (event.key.keysym.sym) {
+      case SDLK_q:
+      case SDLK_ESCAPE:
+        return AppState::Quit;
+      }
+    }
+  }
+  return AppState::Continue;
+}
 void Canvas::draw() const {
   SDL_SetRenderDrawColor(renderer, default_color.r, default_color.g,
                          default_color.b, default_color.a);
@@ -52,5 +75,10 @@ void Canvas::draw() const {
     SDL_RenderDrawPoints(renderer, pair.second.data(), pair.second.size());
   }
   SDL_RenderPresent(renderer);
-  SDL_Delay(5000);
+
+  // display loop
+  AppState state = AppState::Continue;
+  while (state == AppState::Continue) {
+    state = keyboard_handler();
+  }
 }
