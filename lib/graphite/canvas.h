@@ -1,3 +1,6 @@
+#ifndef Graphite_Render_H
+#define Graphite_Render_H
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
@@ -6,9 +9,6 @@
 #include <initializer_list>
 #include <map>
 #include <vector>
-
-#ifndef Graphite_Render_H
-#define Graphite_Render_H
 
 namespace Graphite {
 

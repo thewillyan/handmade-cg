@@ -1,8 +1,9 @@
+#ifndef Algebrick_Point_H
+#define Algebrick_Point_H
+
 #include "vec3d.h"
 #include <iostream>
 
-#ifndef Algebrick_Point_H
-#define Algebrick_Point_H
 namespace Algebrick {
 
 class Point3d {
