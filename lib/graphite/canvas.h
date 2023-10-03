@@ -34,6 +34,14 @@ public:
   // destructor
   ~Canvas();
 
+  // delete copy statements
+  Canvas(const Canvas &) = delete;
+  Canvas &operator=(const Canvas &) = delete;
+
+  // move
+  Canvas(Canvas &&);
+  Canvas &operator=(Canvas &&) = delete;
+
   // getters
   size_t get_width() const;
   size_t get_height() const;

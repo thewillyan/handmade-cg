@@ -33,6 +33,13 @@ Canvas::Canvas(size_t w, size_t h)
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
 };
+Canvas::Canvas(Canvas &&other)
+    : width{other.get_width()}, height{other.get_height()},
+      color_map{std::move(other.color_map)},
+      default_color{std::move(other.default_color)} {
+  other.window = nullptr;
+  other.renderer = nullptr;
+}
 Canvas::~Canvas() {}
 
 size_t Canvas::get_width() const { return width; }
