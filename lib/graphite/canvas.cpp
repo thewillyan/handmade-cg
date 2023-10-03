@@ -8,17 +8,6 @@
 
 using namespace Graphite;
 
-int cmpColors::hashColor(const SDL_Color &color) {
-  return static_cast<int>(color.r) << (3 * 8) |
-         static_cast<int>(color.g) << (2 * 8) |
-         static_cast<int>(color.b) << (1 * 8) | static_cast<int>(color.a);
-}
-
-bool cmpColors::operator()(const SDL_Color &a, const SDL_Color &b) {
-  return hashColor(a) < hashColor(b);
-}
-
-// Canvas definitions
 Canvas::Canvas(size_t w, size_t h, SDL_Color color)
     : width{w}, height{h}, default_color{color},
       color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
@@ -35,8 +24,8 @@ Canvas::Canvas(size_t w, size_t h)
 };
 Canvas::Canvas(Canvas &&other)
     : width{other.get_width()}, height{other.get_height()},
-      color_map{std::move(other.color_map)},
-      default_color{std::move(other.default_color)} {
+      default_color{std::move(other.default_color)},
+      color_map{std::move(other.color_map)} {
   other.window = nullptr;
   other.renderer = nullptr;
 }

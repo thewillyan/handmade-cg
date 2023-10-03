@@ -13,8 +13,14 @@
 namespace Graphite {
 
 struct cmpColors {
-  int hashColor(const SDL_Color &color);
-  bool operator()(const SDL_Color &a, const SDL_Color &b);
+  constexpr int hashColor(const SDL_Color &color) const {
+    return static_cast<int>(color.r) << (3 * 8) |
+           static_cast<int>(color.g) << (2 * 8) |
+           static_cast<int>(color.b) << (1 * 8) | static_cast<int>(color.a);
+  }
+  constexpr bool operator()(const SDL_Color &a, const SDL_Color &b) const {
+    return hashColor(a) < hashColor(b);
+  }
 };
 
 class Canvas {
