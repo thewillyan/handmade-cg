@@ -1,5 +1,5 @@
-#include "point3d.h"
-#include "vec3d.h"
+#include "../include/point3d.hpp"
+#include "../include/vec3d.hpp"
 #include <iostream>
 
 using namespace Algebrick;

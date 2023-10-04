@@ -1,4 +1,4 @@
-#include "../../../lib/graphite/canvas.h"
+#include "../../../lib/graphite/include/canvas.hpp"
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
 

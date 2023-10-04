@@ -1,8 +1,8 @@
 #ifndef Graphite_Object_H
 #define Graphite_Object_H
 
-#include "../algebrick/point3d.h"
-#include "ray.h"
+#include "../../algebrick/include/point3d.hpp"
+#include "../../algebrick/include/ray.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
 #include <utility>
@@ -13,8 +13,8 @@ using PointColor = std::pair<Algebrick::Point3d, SDL_Color>;
 
 class Object {
 public:
-  virtual std::optional<PointColor> intersect(Ray ray) const;
-  ~Object();
+  virtual std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
+  virtual ~Object();
 };
 
 } // namespace Graphite

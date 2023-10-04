@@ -1,9 +1,9 @@
 #ifndef Graphite_Space_H
 #define Graphite_Space_H
 
-#include "../algebrick/point3d.h"
-#include "object.h"
-#include "ray.h"
+#include "../../algebrick/include/point3d.hpp"
+#include "../../algebrick/include/ray.hpp"
+#include "object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <initializer_list>
 #include <optional>
@@ -22,7 +22,7 @@ public:
   ~Space();
 
   void add_obj(Object *);
-  std::optional<PointColor> intersect(Ray ray) const;
+  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
 };
 
 } // namespace Graphite
