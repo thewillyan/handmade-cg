@@ -14,6 +14,7 @@ private:
 
 public:
   Ray(Algebrick::Point3d s, const Algebrick::Vec3d &d);
+  Ray(Algebrick::Point3d s, const Algebrick::Point3d &d);
 
   // getters
   Algebrick::Point3d source() const;

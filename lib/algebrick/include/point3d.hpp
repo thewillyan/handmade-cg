@@ -13,8 +13,9 @@ public:
   double z;
 
   Point3d(double a, double b, double c);
+  Point3d(const Vec3d &);
   Vec3d operator-(const Point3d &other) const;
-  operator Vec3d() const;
+  explicit operator Vec3d() const;
 };
 
 std::ostream &operator<<(std::ostream &out, const Point3d &p);

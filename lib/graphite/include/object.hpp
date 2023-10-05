@@ -13,8 +13,9 @@ using PointColor = std::pair<Algebrick::Point3d, SDL_Color>;
 
 class Object {
 public:
-  virtual std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
-  virtual ~Object();
+  virtual std::optional<PointColor>
+  intersect(const Algebrick::Ray &ray) const = 0;
+  virtual ~Object(){};
 };
 
 } // namespace Graphite

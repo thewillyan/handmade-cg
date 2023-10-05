@@ -5,6 +5,7 @@
 using namespace Algebrick;
 
 Point3d::Point3d(double a, double b, double c) : x{a}, y{b}, z{c} {}
+Point3d::Point3d(const Vec3d &v) : x{v.x}, y{v.y}, z{v.z} {}
 Vec3d Point3d::operator-(const Point3d &other) const {
   return {x - other.x, y - other.y, z - other.z};
 }
