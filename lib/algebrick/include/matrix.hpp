@@ -18,6 +18,7 @@ private:
   constexpr size_t idx(size_t, size_t) const;
 
 public:
+  Matrix(size_t, size_t);
   Matrix(std::initializer_list<std::initializer_list<double>>);
   Matrix(std::initializer_list<Vec3d>);
   Matrix(std::initializer_list<Point3d>);
@@ -25,6 +26,9 @@ public:
   size_t get_lines() const;
   size_t get_cols() const;
   double &get(size_t, size_t);
+  const double &get(size_t, size_t) const;
+
+  Matrix operator*(const Matrix &) const;
 };
 } // namespace Algebrick
 

@@ -8,6 +8,8 @@ using namespace Algebrick;
 
 constexpr size_t Matrix::idx(size_t i, size_t j) const { return (i * n) + j; }
 
+Matrix::Matrix(size_t lines, size_t cols)
+    : m{lines}, n{cols}, elems{std::vector<double>(m * n)} {}
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
     : m{lst.size()}, n{lst.begin()->size()}, elems{std::vector<double>(m * n)} {
   size_t i = 0, j = 0;
@@ -45,4 +47,28 @@ double &Matrix::get(size_t i, size_t j) {
   if (i > m || j > n)
     throw std::out_of_range("Invalid Matrix range!");
   return elems[Matrix::idx(i, j)];
+}
+const double &Matrix::get(size_t i, size_t j) const {
+  if (i > m || j > n)
+    throw std::out_of_range("Invalid Matrix range!");
+  return elems[Matrix::idx(i, j)];
+}
+
+Matrix Matrix::operator*(const Matrix &other) const {
+  if (n != other.get_lines())
+    throw std::out_of_range("The number of columns of the first matrix is \
+        not equal to the number of lines of the second one.");
+
+  Matrix mul_mat = Matrix(n, other.get_lines());
+  double sum;
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; i < other.get_cols(); ++j) {
+      sum = 0;
+      for (size_t k = 0; k < n; ++k) {
+        sum += get(i, k) * other.get(k, j);
+      }
+      mul_mat.get(i, j) = sum;
+    }
+  }
+  return mul_mat;
 }
