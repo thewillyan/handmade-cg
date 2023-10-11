@@ -29,6 +29,7 @@ public:
   const double &get(size_t, size_t) const;
 
   Matrix operator*(const Matrix &) const;
+  Matrix operator*(const Vec3d &) const;
 };
 } // namespace Algebrick
 

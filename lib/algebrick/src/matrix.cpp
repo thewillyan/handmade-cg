@@ -72,3 +72,16 @@ Matrix Matrix::operator*(const Matrix &other) const {
   }
   return mul_mat;
 }
+
+Matrix Matrix::operator*(const Vec3d &other) const {
+  if (n != 3)
+    throw std::out_of_range("The number of columns of the first matrix is \
+        not equal to 3.");
+
+  Matrix mul_mat = Matrix(n, 3);
+  for (size_t i = 0; i < m; ++i) {
+    mul_mat.get(i, 0) =
+        (other.x * get(i, 0)) + (other.y * get(i, 1)) + (other.z * get(i, 2));
+  }
+  return mul_mat;
+}
