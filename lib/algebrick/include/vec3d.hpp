@@ -12,6 +12,7 @@ public:
   double z;
 
   // constructors
+  Vec3d();
   Vec3d(double x, double y, double z);
 
   // basic operators
@@ -29,6 +30,7 @@ public:
   // custom operator
   Vec3d direct_mul(const Vec3d &other) const;
   void direct_mul_assign(const Vec3d &other);
+  Vec3d cross(const Vec3d &other) const;
 
   // vector operations
   double length() const;
