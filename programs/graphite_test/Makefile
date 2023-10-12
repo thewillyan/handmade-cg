@@ -24,7 +24,7 @@ $(BIN_PATH)/%.o: $(SRC_PATH)/%.cpp
 %.a:
 	$(MAKE) -C $(@D)/..
 
-run:
+run: $(TARGET)
 	$(TARGET)
 
 clean:
