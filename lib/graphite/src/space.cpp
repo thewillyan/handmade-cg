@@ -14,6 +14,8 @@ using namespace Graphite;
 
 Space::Space() : objs{std::vector<Object *>()} {}
 Space::Space(std::initializer_list<Object *> lst) : objs{std::vector(lst)} {}
+Space::~Space() {}
+
 void Space::add_obj(Object *obj) { objs.push_back(obj); }
 
 std::optional<PointColor> Space::intersect(const Algebrick::Ray &ray) const {
