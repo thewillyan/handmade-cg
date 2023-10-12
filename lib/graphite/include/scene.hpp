@@ -6,6 +6,7 @@
 #include "../../algebrick/include/vec3d.hpp"
 #include "../include/canvas.hpp"
 #include "../include/space.hpp"
+#include <SDL2/SDL_pixels.h>
 
 namespace Graphite {
 class FrameRef {
@@ -32,13 +33,20 @@ private:
   const FrameRef space_ref;
   FrameRef eye_pov;
   Space *space;
+  SDL_Color bg;
 
 public:
   Scene(Space *);
   Scene(Space *, FrameRef);
   ~Scene();
 
+  // getters
   Space &get_space();
+  SDL_Color get_bg_color() const;
+
+  void set_space(Space *);
+  void set_bg_color(SDL_Color);
+
   void render(Canvas &, double) const;
 };
 } // namespace Graphite

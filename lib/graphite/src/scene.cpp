@@ -1,6 +1,8 @@
 #include "../include/scene.hpp"
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
+#include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_rect.h>
 #include <cstddef>
 #include <optional>
 
@@ -20,10 +22,17 @@ const Algebrick::Vec3d &FrameRef::y_axis() const { return y; }
 const Algebrick::Vec3d &FrameRef::z_axis() const { return z; }
 const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
-Scene::Scene(Space *s) : space{s} {};
-Scene::Scene(Space *s, FrameRef e) : eye_pov{e}, space{s} {};
+Scene::Scene(Space *s) : space{s}, bg{0, 0, 0, 255} {};
+Scene::Scene(Space *s, FrameRef e) : eye_pov{e}, space{s}, bg{0, 0, 0, 255} {};
 Scene::~Scene() {}
+
+// getters
 Space &Scene::get_space() { return *space; }
+SDL_Color Scene::get_bg_color() const { return bg; }
+
+// setters
+void Scene::set_space(Space *s) { space = s; }
+void Scene::set_bg_color(SDL_Color color) { bg = color; }
 
 void Scene::render(Canvas &c, double d) const {
   const double half_w = static_cast<double>(c.get_width()) / 2;
@@ -37,9 +46,12 @@ void Scene::render(Canvas &c, double d) const {
       Algebrick::Point3d p{x, y, -d};
       auto ray = Algebrick::Ray(eye_pov.origin(), p);
       std::optional<PointColor> point_color = space->intersect(ray);
+
+      SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
       if (point_color.has_value()) {
-        c.set_pixel({static_cast<int>(i), static_cast<int>(j)},
-                    point_color->second);
+        c.set_pixel(canvas_point, point_color->second);
+      } else {
+        c.set_pixel(canvas_point, bg);
       }
     }
   }
