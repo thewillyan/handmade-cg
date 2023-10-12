@@ -1,4 +1,4 @@
-LIBS:=algebrick graphite
+LIBS:=graphite algebrick 
 LIBS_PATH:=$(shell realpath ../../lib)
 LIB_FLAGS:=$(foreach lib,$(LIBS),\
 		   -I $(LIBS_PATH)/$(lib)/include -L $(LIBS_PATH)/$(lib)/bin -l $(lib)) \
