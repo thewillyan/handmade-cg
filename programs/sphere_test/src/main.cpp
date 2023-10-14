@@ -21,6 +21,7 @@ int main() {
   auto objs = Graphite::Space();
   objs.add_obj(red_ball);
   auto scene = Graphite::Scene(&objs);
+  scene.set_bg_color({100, 100, 100, 255});
   scene.render(canvas, 10);
 
   canvas.draw();
