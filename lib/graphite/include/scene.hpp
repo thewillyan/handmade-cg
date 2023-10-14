@@ -7,6 +7,7 @@
 #include "../include/canvas.hpp"
 #include "../include/space.hpp"
 #include <SDL2/SDL_pixels.h>
+#include <optional>
 
 namespace Graphite {
 class FrameRef {
@@ -33,7 +34,7 @@ private:
   const FrameRef space_ref;
   FrameRef eye_pov;
   Space *space;
-  SDL_Color bg;
+  std::optional<SDL_Color> bg;
 
 public:
   Scene(Space *);
@@ -42,7 +43,7 @@ public:
 
   // getters
   Space &get_space();
-  SDL_Color get_bg_color() const;
+  std::optional<SDL_Color> get_bg_color() const;
 
   void set_space(Space *);
   void set_bg_color(SDL_Color);
