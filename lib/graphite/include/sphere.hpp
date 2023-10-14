@@ -16,6 +16,7 @@ public:
   Sphere(Algebrick::Point3d, double, SDL_Color);
   ~Sphere();
   std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
+  std::optional<Algebrick::Vec3d> normal(const Algebrick::Point3d &p) const;
 };
 } // namespace Graphite
 

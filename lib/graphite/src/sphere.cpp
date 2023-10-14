@@ -28,3 +28,13 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
       Algebrick::Point3d(ray.direction() * ray_inter_scalar);
   return std::make_pair(std::move(inter_point), color);
 }
+
+std::optional<Algebrick::Vec3d>
+Sphere::normal(const Algebrick::Point3d &p) const {
+  auto v = (p - center);
+  if (v.length() > radius) {
+    return {};
+  } else {
+    return v.norm();
+  }
+}
