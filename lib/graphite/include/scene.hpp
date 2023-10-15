@@ -6,6 +6,7 @@
 #include "../../algebrick/include/vec3d.hpp"
 #include "../include/canvas.hpp"
 #include "../include/space.hpp"
+#include "intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
 
@@ -35,6 +36,7 @@ private:
   FrameRef eye_pov;
   Space *space;
   std::optional<SDL_Color> bg;
+  Light::Intensity ambient_light;
 
 public:
   Scene(Space *);
@@ -45,8 +47,10 @@ public:
   Space &get_space();
   std::optional<SDL_Color> get_bg_color() const;
 
+  // setters
   void set_space(Space *);
   void set_bg_color(SDL_Color);
+  void set_ambient_light(Light::Intensity);
 
   void render(Canvas &, double) const;
 };

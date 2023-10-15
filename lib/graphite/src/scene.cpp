@@ -22,8 +22,9 @@ const Algebrick::Vec3d &FrameRef::y_axis() const { return y; }
 const Algebrick::Vec3d &FrameRef::z_axis() const { return z; }
 const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
-Scene::Scene(Space *s) : space{s}, bg{} {};
-Scene::Scene(Space *s, FrameRef e) : eye_pov{e}, space{s}, bg{} {};
+Scene::Scene(Space *s) : space{s}, bg{}, ambient_light{1, 1, 1} {};
+Scene::Scene(Space *s, FrameRef e)
+    : eye_pov{e}, space{s}, bg{}, ambient_light{1, 1, 1} {};
 Scene::~Scene() {}
 
 // getters
@@ -33,6 +34,7 @@ std::optional<SDL_Color> Scene::get_bg_color() const { return bg; }
 // setters
 void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
+void Scene::set_ambient_light(Light::Intensity i) { ambient_light = i; }
 
 void Scene::render(Canvas &c, double d) const {
   const double half_w = static_cast<double>(c.get_width()) / 2;
@@ -49,9 +51,9 @@ void Scene::render(Canvas &c, double d) const {
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
       if (point_color.has_value()) {
-        c.set_pixel(canvas_point, point_color->second);
+        c.set_pixel(canvas_point, ambient_light.apply(point_color->second));
       } else if (bg.has_value()) {
-        c.set_pixel(canvas_point, *bg);
+        c.set_pixel(canvas_point, ambient_light.apply(*bg));
       }
     }
   }
