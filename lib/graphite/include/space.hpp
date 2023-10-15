@@ -18,6 +18,7 @@ class Space {
 private:
   std::vector<Object *> objs;
   std::vector<Light::Source *> lights;
+  Light::Intensity ambient_light;
 
 public:
   Space();
@@ -26,6 +27,7 @@ public:
 
   void add_obj(Object *);
   void add_light(Light::Source *);
+  void set_ambient_light(Light::Intensity i);
 
   Light::Intensity light_intensity(const Object &obj, const PointColor &inter,
                                    const Algebrick::Ray &eye_ray) const;

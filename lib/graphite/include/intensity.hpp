@@ -22,7 +22,7 @@ public:
   Intensity operator*(double k) const;
   Intensity operator/(double k) const;
 
-  SDL_Color apply(const SDL_Color &color) const;
+  operator SDL_Color() const;
 };
 
 } // namespace Graphite::Light

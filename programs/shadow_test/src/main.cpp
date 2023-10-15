@@ -22,15 +22,15 @@ int main() {
 
   // create light
   auto light = new Graphite::Light::Point({0, 5, 0}, {0.7, 0.7, 0.7});
-  light->set_decay(0, 0.02, 0.1);
+  light->set_decay(1e-4, 6e-2, 0.1);
 
   // create space
   auto objs = Graphite::Space();
+  objs.set_ambient_light({0.5, 0.5, 0.5});
   objs.add_obj(red_ball);
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({100, 100, 100, 255});
-  scene.set_ambient_light({0.9, 0.9, 0.9});
 
   // render
   scene.render(canvas, 10);

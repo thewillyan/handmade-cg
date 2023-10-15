@@ -12,17 +12,19 @@
 
 using namespace Graphite;
 
-Space::Space() : objs{std::vector<Object *>()} {}
-Space::Space(std::initializer_list<Object *> lst) : objs{std::vector(lst)} {}
+Space::Space() : objs{std::vector<Object *>()}, ambient_light{1, 1, 1} {}
+Space::Space(std::initializer_list<Object *> lst)
+    : objs{std::vector(lst)}, ambient_light{1, 1, 1} {}
 Space::~Space() {}
 
 void Space::add_obj(Object *obj) { objs.push_back(obj); }
 void Space::add_light(Light::Source *l) { lights.push_back(l); }
+void Space::set_ambient_light(Light::Intensity i) { ambient_light = i; }
 
 Light::Intensity Space::light_intensity(const Object &obj,
                                         const PointColor &inter,
                                         const Algebrick::Ray &eye_ray) const {
-  Light::Intensity total{0, 0, 0};
+  Light::Intensity total = (ambient_light * Light::Intensity(inter.second));
   for (auto l : lights) {
     total = total + l->get_intensity(obj, inter, eye_ray);
   }
@@ -44,11 +46,11 @@ std::optional<PointColor> Space::intersect(const Algebrick::Ray &ray) const {
       }
     }
   }
-  if (pc.has_value()) {
-    SDL_Color color =
-        light_intensity(*inter_obj, *pc, ray).apply({255, 255, 255, 255});
-    return std::make_pair(pc->first, color);
-  } else {
+  if (!pc.has_value()) {
     return {};
   }
+
+  SDL_Color color =
+      static_cast<SDL_Color>(light_intensity(*inter_obj, *pc, ray));
+  return std::make_pair(pc->first, color);
 }

@@ -36,7 +36,6 @@ private:
   FrameRef eye_pov;
   Space *space;
   std::optional<SDL_Color> bg;
-  Light::Intensity ambient_light;
 
 public:
   Scene(Space *);
@@ -50,7 +49,6 @@ public:
   // setters
   void set_space(Space *);
   void set_bg_color(SDL_Color);
-  void set_ambient_light(Light::Intensity);
 
   void render(Canvas &, double) const;
 };

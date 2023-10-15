@@ -1,4 +1,5 @@
 #include "../include/intensity.hpp"
+#include <SDL2/SDL_stdinc.h>
 #include <algorithm>
 #include <stdexcept>
 
@@ -40,11 +41,7 @@ Intensity Intensity::operator/(double k) const {
   auto new_ib = std::clamp<double>((ib / k), 0, 1);
   return {new_ir, new_ig, new_ib};
 }
-
-SDL_Color Intensity::apply(const SDL_Color &color) const {
-  auto r = ir * static_cast<double>(color.r);
-  auto g = ig * static_cast<double>(color.b);
-  auto b = ib * static_cast<double>(color.g);
-  return {static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b),
-          color.a};
+Intensity::operator SDL_Color() const {
+  return {static_cast<Uint8>(ir * 255), static_cast<Uint8>(ig * 255),
+          static_cast<Uint8>(ib * 255), 255};
 }
