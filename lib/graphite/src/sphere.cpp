@@ -30,12 +30,7 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
 }
 std::optional<Algebrick::Vec3d>
 Sphere::normal(const Algebrick::Point3d &p) const {
-  auto v = (p - center);
-  if (v.length() > radius) {
-    return {};
-  } else {
-    return v.norm();
-  }
+  return (p - center).norm();
 }
 
 double Sphere::get_reflection() const { return reflect; }

@@ -1,5 +1,6 @@
 #include "../include/light_point.hpp"
 #include "../../algebrick/include/point3d.hpp"
+#include "../include/object.hpp"
 #include <cmath>
 #include <stdexcept>
 

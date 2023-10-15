@@ -50,10 +50,11 @@ void Scene::render(Canvas &c, double d) const {
       std::optional<PointColor> point_color = space->intersect(ray);
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
-      if (point_color.has_value()) {
-        c.set_pixel(canvas_point, ambient_light.apply(point_color->second));
-      } else if (bg.has_value()) {
-        c.set_pixel(canvas_point, ambient_light.apply(*bg));
+      std::optional<SDL_Color> color =
+          (point_color.has_value()) ? point_color->second : bg;
+
+      if (color.has_value()) {
+        c.set_pixel(canvas_point, ambient_light.apply(*color));
       }
     }
   }
