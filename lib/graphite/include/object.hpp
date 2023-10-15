@@ -19,6 +19,7 @@ public:
   virtual std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const = 0;
   virtual ~Object(){};
+  double get_reflection() const;
 };
 
 } // namespace Graphite

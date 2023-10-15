@@ -25,7 +25,7 @@ Intensity Point::get_intensity(const Object &obj, const PointColor &inter,
   Intensity k = Intensity(inter.second);
 
   Intensity i_dif = (i * k) * (l * (*n));
-  double reflect = 2;
+  double reflect = obj.get_reflection();
   Intensity i_esp = (i * k) * std::pow(r * v, reflect);
 
   double d =

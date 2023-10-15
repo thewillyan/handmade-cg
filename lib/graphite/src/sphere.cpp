@@ -9,7 +9,7 @@
 using namespace Graphite;
 
 Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor)
-    : center{c}, radius{r}, color{pcolor} {}
+    : center{c}, radius{r}, color{pcolor}, reflect{1} {}
 Sphere::~Sphere() {}
 
 std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
@@ -28,7 +28,6 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
       Algebrick::Point3d(ray.direction() * ray_inter_scalar);
   return std::make_pair(std::move(inter_point), color);
 }
-
 std::optional<Algebrick::Vec3d>
 Sphere::normal(const Algebrick::Point3d &p) const {
   auto v = (p - center);
@@ -38,3 +37,6 @@ Sphere::normal(const Algebrick::Point3d &p) const {
     return v.norm();
   }
 }
+
+double Sphere::get_reflection() const { return reflect; }
+void Sphere::set_reflection(double k) { reflect = k; }
