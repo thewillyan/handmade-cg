@@ -22,7 +22,7 @@ Intensity Point::get_intensity(const Object &obj, const PointColor &inter,
   Algebrick::Vec3d v = -eye_ray.direction();
   Algebrick::Vec3d L = (p - inter.first);
   Algebrick::Vec3d l = L.norm();
-  Algebrick::Vec3d r = ((*n) * ((*n) * l) * 2) - l;
+  Algebrick::Vec3d r = ((*n) * ((*n) * l * 2)) - l;
   Intensity k = Intensity(inter.second);
 
   Intensity i_dif = (i * k) * (l * (*n));

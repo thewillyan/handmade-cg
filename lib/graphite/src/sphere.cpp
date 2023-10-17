@@ -22,8 +22,20 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
   if (delta < 0)
     return {};
 
-  double ray_inter_scalar =
-      std::min((-b + std::sqrt(delta)) / 2.0, (-b - std::sqrt(delta)) / 2.0);
+  double x1 = (-b + std::sqrt(delta)) / 2.0;
+  double x2 = (-b - std::sqrt(delta)) / 2.0;
+  double ray_inter_scalar;
+
+  if (x1 < 0 && x2 < 0) {
+    return {};
+  } else if (x2 < 0) {
+    ray_inter_scalar = x1;
+  } else if (x1 < 0) {
+    ray_inter_scalar = x2;
+  } else {
+    ray_inter_scalar = std::min(x1, x2);
+  }
+
   Algebrick::Point3d inter_point =
       Algebrick::Point3d(ray.direction() * ray_inter_scalar);
   return std::make_pair(std::move(inter_point), color);
