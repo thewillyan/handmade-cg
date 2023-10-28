@@ -2,6 +2,7 @@
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
@@ -47,6 +48,7 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
       Algebrick::Point3d(ray.direction() * ray_inter_scalar);
   return std::make_pair(std::move(inter_point), color);
 }
+
 std::optional<Algebrick::Vec3d>
 Sphere::normal(const Algebrick::Point3d &p) const {
   return (p - center).norm();
@@ -54,3 +56,6 @@ Sphere::normal(const Algebrick::Point3d &p) const {
 
 double Sphere::get_reflection() const { return reflect; }
 void Sphere::set_reflection(double k) { reflect = k; }
+Light::Intensity Sphere::get_dif_int() const { return dif; }
+Light::Intensity Sphere::get_espec_int() const { return espec; }
+Light::Intensity Sphere::get_env_int() const { return env; }

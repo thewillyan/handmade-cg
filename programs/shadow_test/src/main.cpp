@@ -8,6 +8,7 @@
 
 const size_t WIN_WIDTH = 500;
 const size_t WIN_HEIGHT = 500;
+unsigned long int Graphite::Object::id_counter = 0;
 
 int main() {
   auto canvas = Graphite::Canvas(WIN_WIDTH, WIN_HEIGHT);

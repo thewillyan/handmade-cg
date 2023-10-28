@@ -6,7 +6,12 @@
 using namespace Graphite;
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s)
-    : point{p}, norm{n}, color{c}, shine{s} {}
+    : point{p}, norm{n}, color{c}, shine{s}, dif{1, 1, 1}, espec{1, 1, 1},
+      env{1, 1, 1} {}
+
+Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
+             Light::Intensity d, Light::Intensity e, Light::Intensity en)
+    : point{p}, norm{n}, color{c}, shine{s}, dif{d}, espec{e}, env{en} {}
 
 std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d w = ray.source() - point;
@@ -26,3 +31,7 @@ Plane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 }
 
 double Plane::get_reflection() const { return shine; }
+void Plane::set_reflection(double k) { shine = k; }
+Light::Intensity Plane::get_dif_int() const { return dif; }
+Light::Intensity Plane::get_espec_int() const { return espec; }
+Light::Intensity Plane::get_env_int() const { return env; }
