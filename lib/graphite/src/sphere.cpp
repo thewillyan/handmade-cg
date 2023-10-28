@@ -1,6 +1,7 @@
 #include "../include/sphere.hpp"
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
+#include "graphite/include/intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
@@ -9,7 +10,13 @@
 using namespace Graphite;
 
 Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor)
-    : center{c}, radius{r}, color{pcolor}, reflect{1} {}
+    : center{c}, radius{r}, color{pcolor}, reflect{1}, dif{1, 1, 1},
+      espec{1, 1, 1}, env{1, 1, 1} {}
+
+Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor,
+               Light::Intensity d, Light::Intensity esp, Light::Intensity en)
+    : center{c}, radius{r}, color{pcolor}, reflect{1}, dif{d}, espec{esp},
+      env{en} {}
 Sphere::~Sphere() {}
 
 std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
