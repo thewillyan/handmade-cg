@@ -14,41 +14,45 @@ unsigned long int Graphite::Object::id_counter = 0;
 
 int main() {
   auto canvas = Graphite::Canvas(WIN_WIDTH, WIN_HEIGHT);
-  double canvas_dist = 5;
+  double canvas_dist = 30;
 
   // create ball
-  double radius = 900;
-  Algebrick::Point3d center{0, 0, -(canvas_dist + radius)};
-  SDL_Color color{255, 0, 0, 255};
-  auto red_ball = new Graphite::Sphere(center, radius, color);
-  red_ball->set_reflection(2);
+  double radius = 40;
+  Algebrick::Point3d center{0, 0, -100};
+  SDL_Color color{0, 0, 0, 255};
+  Graphite::Light::Intensity ball_k{0.7, 0.2, 0.2};
+  auto red_ball =
+      new Graphite::Sphere(center, radius, color, ball_k, ball_k, ball_k);
+  red_ball->set_reflection(10);
 
+  Graphite::Light::Intensity no_ambient{0, 0, 0};
   // create planes
-  SDL_Color plane1_color = {static_cast<Uint8>(0.2 * 255),
-                            static_cast<Uint8>(0.7 * 255),
-                            static_cast<Uint8>(0.2 * 255), 255};
-  Graphite::Plane *plane1 =
-      new Graphite::Plane({0, -radius, 0}, {0, 1, 0}, plane1_color, 1);
+  Graphite::Light::Intensity floor_k{0.2, 0.7, 0.2};
+  SDL_Color floor_color = {0, 0, 0, 255};
+  Graphite::Plane *floor = new Graphite::Plane(
+      {0, -radius, 0}, {0, 1, 0}, floor_color, 1, floor_k, floor_k, no_ambient);
 
-  Graphite::Plane *plane2 =
-      new Graphite::Plane({0, -200, 0}, {0, 0, 1}, plane1_color, 1);
+  Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
+  SDL_Color wall_color = {0, 0, 0, 255};
+  Graphite::Plane *wall = new Graphite::Plane(
+      {0, 0, -200}, {0, 0, 1}, wall_color, 1, wall_k, wall_k, no_ambient);
 
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});
-  light->set_decay(1e-4, 6e-2, 0.1);
+  light->set_decay(1e-5, 6e-3, 0.1);
 
   // create space
   auto objs = Graphite::Space();
   objs.set_ambient_light({0.3, 0.3, 0.3});
   objs.add_obj(red_ball);
-  objs.add_obj(plane1);
-  objs.add_obj(plane2);
+  objs.add_obj(floor);
+  objs.add_obj(wall);
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
-  scene.set_bg_color({100, 100, 100, 255});
+  scene.set_bg_color({255, 255, 255, 255});
 
   // render
-  scene.render(canvas, 10);
+  scene.render(canvas, canvas_dist);
   canvas.draw();
   return 0;
 }
