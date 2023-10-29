@@ -35,13 +35,19 @@ void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
 
 void Scene::render(Canvas &c, double d) const {
-  const double half_w = static_cast<double>(c.get_width()) / 2;
-  const double half_h = static_cast<double>(c.get_height()) / 2;
+  const double pov_w = c.get_pov_width();
+  const double pov_h = c.get_pov_height();
+  const double half_w = static_cast<double>(pov_w) / 2;
+  const double half_h = static_cast<double>(pov_h) / 2;
+  const double dx = pov_w / c.get_width();
+  const double dy = pov_h / c.get_height();
+  const double half_dx = dx / 2;
+  const double half_dy = dy / 2;
 
   for (size_t i = 0; i < c.get_width(); ++i) {
-    const double x = static_cast<double>(i) + (1.0 / 2.0) - half_w;
+    const double x = -half_w + half_dx + static_cast<double>(i) * dx;
     for (size_t j = 0; j < c.get_height(); ++j) {
-      const double y = static_cast<double>(j) + (1.0 / 2.0) - half_h;
+      const double y = half_h - half_dy - static_cast<double>(j) * dy;
       // center point of an canvas "block"
       Algebrick::Point3d p{x, y, -d};
       auto ray = Algebrick::Ray(eye_pov.origin(), p);
