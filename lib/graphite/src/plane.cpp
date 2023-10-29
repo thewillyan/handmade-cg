@@ -15,9 +15,9 @@ Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
 
 std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
   double denom = norm * ray.direction();
-  if (abs(denom) <= 1e-8)
+  if (denom == 0)
     return {};
-  double tInt = (point - ray.source()) * norm / denom;
+  double tInt = (point - ray.source()) * (norm / denom);
 
   if (tInt <= 0)
     return {};

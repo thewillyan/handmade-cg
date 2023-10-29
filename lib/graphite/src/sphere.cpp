@@ -1,6 +1,6 @@
-#include "../include/sphere.hpp"
-#include "../../algebrick/include/point3d.hpp"
-#include "../../algebrick/include/ray.hpp"
+#include "graphite/include/sphere.hpp"
+#include "algebrick/include/point3d.hpp"
+#include "algebrick/include/ray.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/object.hpp"
 #include <SDL2/SDL_pixels.h>
@@ -45,7 +45,7 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
   }
 
   Algebrick::Point3d inter_point =
-      Algebrick::Point3d(ray.direction() * ray_inter_scalar);
+      ray.source() + Algebrick::Point3d(ray.direction() * ray_inter_scalar);
   return std::make_pair(std::move(inter_point), color);
 }
 
