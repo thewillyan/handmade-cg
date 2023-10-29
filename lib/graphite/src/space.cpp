@@ -2,6 +2,7 @@
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
 #include "../include/object.hpp"
+#include "graphite/include/intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
@@ -24,9 +25,9 @@ void Space::set_ambient_light(Light::Intensity i) { ambient_light = i; }
 Light::Intensity Space::light_intensity(const Object &obj,
                                         const PointColor &inter,
                                         const Algebrick::Ray &eye_ray) const {
-  Light::Intensity total = (ambient_light * Light::Intensity(inter.second));
+  Light::Intensity total = (ambient_light * obj.get_env_int());
   for (auto l : lights) {
-    total = total + l->get_intensity(obj, inter, eye_ray);
+    total = total + l->get_intensity(obj, objs, inter, eye_ray);
   }
   return total;
 }
