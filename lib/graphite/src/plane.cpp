@@ -14,10 +14,12 @@ Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
     : point{p}, norm{n}, color{c}, shine{s}, dif{d}, espec{e}, env{en} {}
 
 std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
-  Algebrick::Vec3d w = ray.source() - point;
-  double tInt = -(norm * w) / (norm * ray.direction());
+  double denom = norm * ray.direction();
+  if (abs(denom) <= 1e-8)
+    return {};
+  double tInt = (point - ray.source()) * norm / denom;
 
-  if (tInt >= 0)
+  if (tInt <= 0)
     return {};
 
   Algebrick::Point3d pInt =
