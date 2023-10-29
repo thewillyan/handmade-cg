@@ -8,15 +8,23 @@
 
 using namespace Graphite;
 
+Canvas::Canvas(size_t w, size_t h, size_t pw, size_t ph, SDL_Color color)
+    : width{w}, height{h}, pov_w{pw}, pov_h{ph}, default_color{color},
+      color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
+      window{nullptr}, renderer{nullptr} {
+  SDL_Init(SDL_INIT_EVERYTHING);
+  SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
+}
+
 Canvas::Canvas(size_t w, size_t h, SDL_Color color)
-    : width{w}, height{h}, default_color{color},
+    : width{w}, height{h}, pov_w{60}, pov_h{60}, default_color{color},
       color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
       window{nullptr}, renderer{nullptr} {
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_CreateWindowAndRenderer(width, height, 0, &window, &renderer);
 }
 Canvas::Canvas(size_t w, size_t h)
-    : width{w}, height{h}, default_color{0, 0, 0, 255},
+    : width{w}, height{h}, pov_w{60}, pov_h{60}, default_color{0, 0, 0, 255},
       color_map{std::map<SDL_Color, std::vector<SDL_Point>, cmpColors>()},
       window{nullptr}, renderer{nullptr} {
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -24,6 +32,7 @@ Canvas::Canvas(size_t w, size_t h)
 };
 Canvas::Canvas(Canvas &&other)
     : width{other.get_width()}, height{other.get_height()},
+      pov_w{other.get_pov_width()}, pov_h{other.get_pov_height()},
       default_color{std::move(other.default_color)},
       color_map{std::move(other.color_map)} {
   other.window = nullptr;
@@ -33,6 +42,8 @@ Canvas::~Canvas() {}
 
 size_t Canvas::get_width() const { return width; }
 size_t Canvas::get_height() const { return height; }
+size_t Canvas::get_pov_width() const { return pov_w; }
+size_t Canvas::get_pov_height() const { return pov_h; }
 
 void Canvas::set_pixel(SDL_Point point, SDL_Color color) {
   color_map[color].push_back(point);

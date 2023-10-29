@@ -27,6 +27,8 @@ class Canvas {
 private:
   const size_t width;
   const size_t height;
+  const size_t pov_w;
+  const size_t pov_h;
   SDL_Color default_color;
   std::map<SDL_Color, std::vector<SDL_Point>, cmpColors> color_map;
   SDL_Window *window;
@@ -34,6 +36,7 @@ private:
 
 public:
   // contructor
+  Canvas(size_t, size_t, size_t, size_t, SDL_Color);
   Canvas(size_t, size_t, SDL_Color);
   Canvas(size_t, size_t);
 
@@ -51,6 +54,8 @@ public:
   // getters
   size_t get_width() const;
   size_t get_height() const;
+  size_t get_pov_width() const;
+  size_t get_pov_height() const;
 
   // methods
   void set_pixel(SDL_Point, SDL_Color);
