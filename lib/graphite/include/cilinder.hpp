@@ -3,6 +3,7 @@
 
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/circular_plane.hpp"
 #include "graphite/include/intensity.hpp"
 #include "object.hpp"
 #include <optional>
@@ -16,6 +17,9 @@ private:
   double height;
   Algebrick::Vec3d dir;
   Algebrick::Point3d base_center;
+  //TODO: Remove this and define the cylinder mathematically
+  CircularPlane base;
+  CircularPlane top;
 
   Light::Intensity dif;
   Light::Intensity spec;
