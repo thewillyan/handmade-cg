@@ -47,7 +47,12 @@ Intensity Point::get_intensity(const Object &inter_obj,
 
   Intensity i_dif = (i * inter_obj.get_dif_int()) * (l * (*n));
   double reflect = inter_obj.get_reflection();
-  Intensity i_esp = (i * inter_obj.get_espec_int()) * std::pow(r * v, reflect);
+  double rv = r * v;
+
+  Intensity i_esp{0, 0, 0};
+  if (rv > 0) {
+    i_esp = (i * inter_obj.get_espec_int()) * std::pow(r * v, reflect);
+  }
 
   double d =
       (decay.x * std::pow(L.length(), 2)) + (decay.y * L.length()) + decay.z;
