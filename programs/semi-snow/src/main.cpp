@@ -1,6 +1,8 @@
 #include "algebrick/include/point3d.hpp"
 #include "graphite/include/canvas.hpp"
 #include "graphite/include/cilinder.hpp"
+#include "graphite/include/cone.hpp"
+#include "graphite/include/intensity.hpp"
 #include "graphite/include/light_point.hpp"
 #include "graphite/include/plane.hpp"
 #include "graphite/include/scene.hpp"
@@ -31,9 +33,11 @@ int main() {
   Graphite::Light::Intensity cilinder_k{0.2, 0.3, 0.8};
   Algebrick::Vec3d cylinder_dir{-1 / std::sqrt(3), 1 / std::sqrt(3),
                                 -1 / std::sqrt(3)};
+  double cylinder_height = 3 * radius;
+  double cylinder_radius = radius / 3;
   auto cilinder = new Graphite::Cilinder(sphere_center, cylinder_dir,
-                                         radius / 3, 3 * radius, 10, cilinder_k,
-                                         cilinder_k, cilinder_k);
+                                         cylinder_radius, cylinder_height, 10,
+                                         cilinder_k, cilinder_k, cilinder_k);
 
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   // create planes
@@ -47,6 +51,16 @@ int main() {
   Graphite::Plane *wall = new Graphite::Plane(
       {0, 0, -200}, {0, 0, 1}, wall_color, 1, wall_k, wall_k, no_ambient);
 
+  // create cone
+  Algebrick::Point3d top_center =
+      sphere_center + (cylinder_dir * cylinder_height);
+  double cone_radius = (1.5 * radius);
+  double cone_height = (1.0 / 3.0 * radius);
+  Graphite::Light::Intensity cone_light{0.8, 0.3, 0.2};
+  Graphite::Cone *cone =
+      new Graphite::Cone(cone_height, cone_radius, top_center, cylinder_dir, 10,
+                         cone_light, cone_light, cone_light);
+
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});
   light->set_decay(1e-5, 6e-3, 0.1);
@@ -54,10 +68,11 @@ int main() {
   // create space
   auto objs = Graphite::Space();
   objs.set_ambient_light({0.3, 0.3, 0.3});
-  objs.add_obj(red_ball);
-  objs.add_obj(cilinder);
-  objs.add_obj(floor);
-  objs.add_obj(wall);
+  // objs.add_obj(red_ball);
+  // objs.add_obj(cilinder);
+  objs.add_obj(cone);
+  // objs.add_obj(floor);
+  // objs.add_obj(wall);
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
