@@ -6,16 +6,10 @@
 #include <algorithm>
 #include <cmath>
 #include <utility>
+#include <vector>
 
 using namespace Graphite;
 
-// double radius;
-// double height;
-// double aperture;
-// Algebrick::Vec3d norm;
-// Algebrick::Point3d center;
-// Algebrick::Point3d top;
-// CircularPlane base;
 Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n)
     : radius{r}, height{h}, aperture{std::acos(h / std::sqrt(r * r + h * h))},
@@ -26,81 +20,66 @@ Cone::Cone(double h, double r, Algebrick::Point3d base_center,
 Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n, double shiness, Light::Intensity env,
            Light::Intensity esp, Light::Intensity dif)
-    : radius{r}, height{h}, aperture{std::acos(h / std::sqrt(r * r + h * h))},
-      norm{n.norm()}, center{base_center}, top{base_center + n.norm() * h},
-      base{base_center, r, n.norm()}, shiness{shiness}, env{env}, espec{esp},
-      dif{dif} {}
+    : radius{r}, height{h}, aperture{0.2}, norm{n.norm()}, center{base_center},
+      top{base_center + n.norm() * h}, base{base_center, r, n.norm()},
+      shiness{shiness}, env{env}, espec{esp}, dif{dif} {}
 
 std::optional<PointColor> Cone::intersect(const Algebrick::Ray &ray) const {
-  Algebrick::Vec3d v = top - ray.source();
-  double cos_sqr_theta = std::pow(std::cos(aperture), 2);
+  Algebrick::Vec3d v =
+      (ray.source() - center) - norm * ((ray.source() - center) * norm);
+
+  double cos_sqr = std::pow(std::cos(aperture), 2);
   double a = std::pow(ray.direction() * norm, 2) -
-             (ray.direction() * ray.direction()) * cos_sqr_theta;
-  double b = ((v * ray.direction()) * cos_sqr_theta) -
-             (v * norm) * (ray.direction() * norm);
-  double c = std::pow(v * norm, 2) - (v * v) * cos_sqr_theta;
+             (ray.direction() * ray.direction()) * cos_sqr;
+  double b = ((ray.direction() * v) * cos_sqr) -
+             ((v * norm) * (ray.direction() * norm));
+  double c = std::pow(v * norm, 2) - ((v * v) * cos_sqr);
 
   double delta = std::pow(b, 2) - (4 * a * c);
 
-  if (delta < 0) {
+  // No intersection
+  if (delta < 0)
     return {};
+
+  std::vector<std::pair<double, Algebrick::Point3d>> valid_points;
+
+  double t1 = (-b + sqrt(delta)) / (2 * a);
+  if (t1 >= 0) {
+    Algebrick::Point3d p1 = ray.source() + ray.direction() * t1;
+    double inside_p1 = (p1 - center) * norm;
+
+    if (inside_p1 >= 0 && inside_p1 <= height)
+      valid_points.push_back(std::make_pair(t1, p1));
   }
 
-  if (delta == 0) {
-    double tInt = -b / (2 * a);
-    if (tInt < 0)
-      return {};
-    Algebrick::Point3d pInt = ray.source() + ray.direction() * tInt;
+  double t2 = (-b - sqrt(delta)) / (2 * a);
+  if (t2 >= 0) {
+    Algebrick::Point3d p2 = ray.source() + ray.direction() * t2;
+    double inside_p2 = (p2 - center) * norm;
 
-    double height_limit = (top - pInt) * norm;
-    if (height_limit < 0 || height_limit > height) {
-      return {};
-    }
-    return std::make_pair(pInt, SDL_Color{0, 0, 0, 0});
-  } else {
-    double tInt1 = (-b + std::sqrt(delta)) / (2 * a);
-    Algebrick::Point3d pInt1 = ray.source() + ray.direction() * tInt1;
-    double height_limit1 = (top - pInt1) * norm;
-    bool limit1_in_range = height_limit1 >= 0 && height_limit1 <= height;
-
-    double tInt2 = (-b - std::sqrt(delta)) / (2 * a);
-    Algebrick::Point3d pInt2 = ray.source() + ray.direction() * tInt2;
-    double height_limit2 = (top - pInt2) * norm;
-    bool limit2_in_range = height_limit2 >= 0 && height_limit2 <= height;
-
-    if (!limit1_in_range && !limit2_in_range) {
-      return {};
-    }
-
-    std::optional<double> tInt;
-    if (tInt1 < 0 && tInt2 >= 0) {
-      if (limit2_in_range) {
-        tInt = tInt2;
-      }
-    } else if (tInt1 >= 0 && tInt2 < 0) {
-      if (limit1_in_range) {
-        tInt = tInt1;
-      }
-    } else if (tInt1 >= 0 && tInt2 >= 0) {
-      if (limit1_in_range && !limit2_in_range) {
-        tInt = tInt1;
-      } else if (limit2_in_range && !limit1_in_range) {
-        tInt = tInt2;
-      } else {
-        tInt = std::min(tInt1, tInt2);
-      }
-    }
-
-    if (!tInt.has_value())
-      return {};
-
-    Algebrick::Point3d pInt = ray.source() + ray.direction() * tInt.value();
-    double height_limit = (top - pInt) * norm;
-    if (height_limit < 0 || height_limit > height) {
-      return {};
-    }
-    return std::make_pair(pInt, SDL_Color{0, 0, 0, 0});
+    if (inside_p2 >= 0 && inside_p2 <= height)
+      valid_points.push_back(std::make_pair(t2, p2));
   }
+
+  auto intersected_base = base.intersect(ray);
+
+  if (intersected_base.has_value()) {
+    double t = (intersected_base->first - ray.source()).length();
+    valid_points.push_back(std::make_pair(t, intersected_base->first));
+  }
+
+  double min = INFINITY;
+  Algebrick::Point3d best_point = ray.source();
+
+  for (auto const &p : valid_points) {
+    if (p.first < min) {
+      min = p.first;
+      best_point = p.second;
+    }
+  }
+
+  return min == INFINITY ? std::optional<PointColor>{}
+                         : std::make_pair(best_point, SDL_Color{0, 0, 0, 0});
 }
 
 std::optional<Algebrick::Vec3d>

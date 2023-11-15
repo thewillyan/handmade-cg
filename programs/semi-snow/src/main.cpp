@@ -31,8 +31,7 @@ int main() {
 
   // create cilinder
   Graphite::Light::Intensity cilinder_k{0.2, 0.3, 0.8};
-  Algebrick::Vec3d cylinder_dir{-1 / std::sqrt(3), 1 / std::sqrt(3),
-                                -1 / std::sqrt(3)};
+  Algebrick::Vec3d cylinder_dir{0, 1, 0};
   double cylinder_height = 3 * radius;
   double cylinder_radius = radius / 3;
   auto cilinder = new Graphite::Cilinder(sphere_center, cylinder_dir,
@@ -55,11 +54,11 @@ int main() {
   Algebrick::Point3d top_center =
       sphere_center + (cylinder_dir * cylinder_height);
   double cone_radius = (1.5 * radius);
-  double cone_height = (1.0 / 3.0 * radius);
+  double cone_height = (10);
   Graphite::Light::Intensity cone_light{0.8, 0.3, 0.2};
   Graphite::Cone *cone =
-      new Graphite::Cone(cone_height, cone_radius, top_center, cylinder_dir, 10,
-                         cone_light, cone_light, cone_light);
+      new Graphite::Cone(cone_height, cone_radius, {0, -25, -40}, cylinder_dir,
+                         10, cone_light, cone_light, cone_light);
 
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});
@@ -71,8 +70,8 @@ int main() {
   // objs.add_obj(red_ball);
   // objs.add_obj(cilinder);
   objs.add_obj(cone);
-  // objs.add_obj(floor);
-  // objs.add_obj(wall);
+  objs.add_obj(floor);
+  objs.add_obj(wall);
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
