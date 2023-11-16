@@ -2,15 +2,16 @@
 #define Graphite_Scene
 
 #include "../../algebrick/include/point3d.hpp"
-#include "../../algebrick/include/ray.hpp"
 #include "../../algebrick/include/vec3d.hpp"
 #include "../include/canvas.hpp"
 #include "../include/space.hpp"
-#include "intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
 
 namespace Graphite {
+
+enum class RenderMode { PERSPECTIVE, ORTHOGRAPHIC, OBLIQUE };
+
 class FrameRef {
 private:
   Algebrick::Vec3d x;
@@ -36,10 +37,13 @@ private:
   FrameRef eye_pov;
   Space *space;
   std::optional<SDL_Color> bg;
+  RenderMode mode;
+  Algebrick::Vec3d oblique_dir;
 
 public:
   Scene(Space *);
   Scene(Space *, FrameRef);
+  Scene(Space *, FrameRef, RenderMode);
   ~Scene();
 
   // getters
@@ -49,6 +53,8 @@ public:
   // setters
   void set_space(Space *);
   void set_bg_color(SDL_Color);
+  void set_render_mode(const RenderMode);
+  void set_oblique_dir(const Algebrick::Vec3d &);
 
   void render(Canvas &, double) const;
 };

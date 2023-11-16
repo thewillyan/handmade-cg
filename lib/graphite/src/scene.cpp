@@ -22,8 +22,13 @@ const Algebrick::Vec3d &FrameRef::y_axis() const { return y; }
 const Algebrick::Vec3d &FrameRef::z_axis() const { return z; }
 const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
-Scene::Scene(Space *s) : space{s}, bg{} {};
-Scene::Scene(Space *s, FrameRef e) : eye_pov{e}, space{s}, bg{} {};
+Scene::Scene(Space *s)
+    : space{s}, bg{}, mode{RenderMode::PERSPECTIVE}, oblique_dir{0, 0, 0} {};
+Scene::Scene(Space *s, FrameRef e)
+    : eye_pov{e}, space{s}, bg{}, mode{RenderMode::PERSPECTIVE},
+      oblique_dir{0, 0, 0} {};
+Scene::Scene(Space *s, FrameRef e, RenderMode m)
+    : eye_pov{e}, space{s}, bg{}, mode{m}, oblique_dir{0, 0, 0} {};
 Scene::~Scene() {}
 
 // getters
@@ -33,6 +38,7 @@ std::optional<SDL_Color> Scene::get_bg_color() const { return bg; }
 // setters
 void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
+void Scene::set_render_mode(const RenderMode m) { mode = m; }
 
 void Scene::render(Canvas &c, double d) const {
   const double pov_w = c.get_pov_width();
@@ -49,9 +55,23 @@ void Scene::render(Canvas &c, double d) const {
     for (size_t j = 0; j < c.get_height(); ++j) {
       const double y = half_h - half_dy - static_cast<double>(j) * dy;
       // center point of an canvas "block"
+      Algebrick::Ray *ray;
       Algebrick::Point3d p{x, y, -d};
-      auto ray = Algebrick::Ray(eye_pov.origin(), p);
-      std::optional<PointColor> point_color = space->intersect(ray);
+
+      switch (mode) {
+      case RenderMode::PERSPECTIVE: {
+        ray = new Algebrick::Ray{eye_pov.origin(), p};
+        break;
+      }
+      case RenderMode::ORTHOGRAPHIC: {
+        ray = new Algebrick::Ray{p, eye_pov.z_axis()};
+        break;
+      }
+      case RenderMode::OBLIQUE:
+        ray = new Algebrick::Ray{p, oblique_dir};
+        break;
+      }
+      std::optional<PointColor> point_color = space->intersect(*ray);
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
       std::optional<SDL_Color> color =
