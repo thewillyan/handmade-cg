@@ -45,8 +45,18 @@ size_t Canvas::get_height() const { return height; }
 size_t Canvas::get_pov_width() const { return pov_w; }
 size_t Canvas::get_pov_height() const { return pov_h; }
 
+void Canvas::set_pov_width(size_t w) { pov_w = w; }
+void Canvas::set_pov_height(size_t h) { pov_h = h; }
 void Canvas::set_pixel(SDL_Point point, SDL_Color color) {
   color_map[color].push_back(point);
+}
+void Canvas::zoom_in(double factor) {
+  pov_w = static_cast<size_t>(pov_w / factor);
+  pov_h = static_cast<size_t>(pov_h / factor);
+}
+void Canvas::zoom_out(double factor) {
+  pov_w = static_cast<size_t>(pov_w * factor);
+  pov_h = static_cast<size_t>(pov_h * factor);
 }
 void Canvas::fill(SDL_Color c) {
   default_color = c;
