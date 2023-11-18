@@ -1,7 +1,6 @@
 #include "algebrick/include/point3d.hpp"
 #include "graphite/include/canvas.hpp"
 #include "graphite/include/cilinder.hpp"
-#include "graphite/include/cone.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/light_point.hpp"
 #include "graphite/include/plane.hpp"
@@ -54,6 +53,7 @@ int main() {
   Graphite::TriangularPlane *tp = new Graphite::TriangularPlane(
       {-20, 5, -100}, {20, 5, -100}, {0, 35, -100}, 10, ball_k, ball_k, ball_k);
   tp->translate({0, 0, 50});
+  tp->scale(0.04);
 
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});

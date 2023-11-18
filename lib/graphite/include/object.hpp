@@ -38,6 +38,7 @@ public:
 
   // transformations
   virtual void translate(const Algebrick::Vec3d &offset) = 0;
+  virtual void scale(double k) = 0;
 
   // TODO:
   // rotation

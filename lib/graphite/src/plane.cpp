@@ -40,3 +40,4 @@ Light::Intensity Plane::get_espec_int() const { return espec; }
 Light::Intensity Plane::get_env_int() const { return env; }
 
 void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }
+void Plane::scale([[maybe_unused]] double k) {}
