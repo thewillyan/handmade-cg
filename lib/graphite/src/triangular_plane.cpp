@@ -70,3 +70,9 @@ double TriangularPlane::get_reflection() const { return shiness; }
 Light::Intensity TriangularPlane::get_dif_int() const { return diff; }
 Light::Intensity TriangularPlane::get_espec_int() const { return espec; }
 Light::Intensity TriangularPlane::get_env_int() const { return env; }
+
+void TriangularPlane::translate(const Algebrick::Vec3d &offset) {
+  p0 += offset;
+  p1 += offset;
+  p2 += offset;
+}

@@ -1,5 +1,6 @@
 #include "graphite/include/plane.hpp"
 #include "algebrick/include/point3d.hpp"
+#include "algebrick/include/vec3d.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <utility>
 
@@ -37,3 +38,5 @@ void Plane::set_reflection(double k) { shine = k; }
 Light::Intensity Plane::get_dif_int() const { return dif; }
 Light::Intensity Plane::get_espec_int() const { return espec; }
 Light::Intensity Plane::get_env_int() const { return env; }
+
+void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }

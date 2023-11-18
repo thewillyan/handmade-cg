@@ -33,6 +33,9 @@ public:
   Light::Intensity get_espec_int() const override;
   Light::Intensity get_env_int() const override;
 
+  // transformations
+  void translate(const Algebrick::Vec3d &offset) override;
+
   // setters
   void set_reflection(double k);
 };

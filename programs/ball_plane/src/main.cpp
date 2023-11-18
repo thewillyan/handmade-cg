@@ -24,6 +24,7 @@ int main() {
   auto red_ball =
       new Graphite::Sphere(center, radius, color, ball_k, ball_k, ball_k);
   red_ball->set_reflection(10);
+  red_ball->translate({100, 0, 0});
 
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   // create planes

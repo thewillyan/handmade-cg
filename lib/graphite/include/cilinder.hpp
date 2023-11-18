@@ -17,7 +17,7 @@ private:
   double height;
   Algebrick::Vec3d dir;
   Algebrick::Point3d base_center;
-  //TODO: Remove this and define the cylinder mathematically
+  // TODO: Remove this and define the cylinder mathematically
   CircularPlane base;
   CircularPlane top;
 
@@ -39,6 +39,9 @@ public:
   Light::Intensity get_dif_int() const override;
   Light::Intensity get_espec_int() const override;
   Light::Intensity get_env_int() const override;
+
+  // transformations
+  void translate(const Algebrick::Vec3d &offset) override;
 
   // setters
   void set_reflection(double k);

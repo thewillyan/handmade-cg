@@ -45,3 +45,7 @@ double CircularPlane::get_reflection() const { return shiness; }
 Light::Intensity CircularPlane::get_dif_int() const { return dif; }
 Light::Intensity CircularPlane::get_espec_int() const { return espec; }
 Light::Intensity CircularPlane::get_env_int() const { return env; }
+
+void CircularPlane::translate(const Algebrick::Vec3d &offset) {
+  center += offset;
+}
