@@ -12,11 +12,25 @@ Vec3d Point3d::operator+(const Point3d &other) const {
 Vec3d Point3d::operator-(const Point3d &other) const {
   return {x - other.x, y - other.y, z - other.z};
 }
+Vec3d Point3d::operator*(double k) const { return {x * k, y * k, z * k}; }
 
 Point3d &Point3d::operator+=(const Point3d &other) {
   x += other.x;
   y += other.y;
   z += other.z;
+  return *this;
+}
+
+Point3d &Point3d::operator-=(const Point3d &other) {
+  x -= other.x;
+  y -= other.y;
+  z -= other.z;
+  return *this;
+};
+Point3d &Point3d::operator*=(double k) {
+  x *= k;
+  y *= k;
+  z *= k;
   return *this;
 }
 

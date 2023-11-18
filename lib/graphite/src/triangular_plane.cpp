@@ -1,6 +1,8 @@
 #include "graphite/include/triangular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include <iostream>
+#include <stdexcept>
 #include <utility>
 
 using namespace Graphite;
@@ -75,4 +77,22 @@ void TriangularPlane::translate(const Algebrick::Vec3d &offset) {
   p0 += offset;
   p1 += offset;
   p2 += offset;
+}
+void TriangularPlane::scale(double k) {
+  if (k <= 0) {
+    throw std::invalid_argument("Scale factor less than 0");
+  } else if (k < 1) {
+    k = -(1.0 / k);
+  }
+
+  Algebrick::Point3d center = {(p0.x + p1.x + p2.x) / 3,
+                               (p0.y + p1.y + p2.y) / 3,
+                               (p0.z + p1.z + p2.z) / 3};
+
+  for (Algebrick::Point3d *p_ptr : {&p0, &p1, &p2}) {
+    // distance to the center of the triangle.
+    Algebrick::Vec3d distc = (*p_ptr - center);
+    Algebrick::Vec3d offset = distc.norm() * k;
+    *p_ptr += offset;
+  }
 }

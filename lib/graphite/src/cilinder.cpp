@@ -124,3 +124,9 @@ void Cilinder::translate(const Algebrick::Vec3d &offset) {
   base.translate(offset);
   top.translate(offset);
 }
+void Cilinder::scale(double k) {
+  height *= k;
+  radius *= k;
+  base.scale(k);
+  top.scale(k);
+}

@@ -49,3 +49,5 @@ Light::Intensity CircularPlane::get_env_int() const { return env; }
 void CircularPlane::translate(const Algebrick::Vec3d &offset) {
   center += offset;
 }
+
+void CircularPlane::scale(double k) { radius *= k; }

@@ -61,3 +61,4 @@ Light::Intensity Sphere::get_espec_int() const { return espec; }
 Light::Intensity Sphere::get_env_int() const { return env; }
 
 void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
+void Sphere::scale(double k) { radius *= k; }

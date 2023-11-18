@@ -42,6 +42,7 @@ public:
 
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;
+  void scale(double k) override;
 
   // setters
   void set_reflection(double k);
