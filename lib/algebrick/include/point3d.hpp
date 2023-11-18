@@ -16,6 +16,7 @@ public:
   Point3d(const Vec3d &);
   Vec3d operator-(const Point3d &other) const;
   Vec3d operator+(const Point3d &other) const;
+  Point3d &operator+=(const Point3d &other);
   explicit operator Vec3d() const;
 };
 

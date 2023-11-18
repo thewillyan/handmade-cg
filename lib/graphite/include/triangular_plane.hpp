@@ -31,6 +31,9 @@ public:
   virtual std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const;
 
+  // transformations
+  void translate(const Algebrick::Vec3d &offset);
+
   // getters
   virtual double get_reflection() const;
   virtual Light::Intensity get_dif_int() const;

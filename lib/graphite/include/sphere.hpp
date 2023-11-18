@@ -25,11 +25,13 @@ public:
   // object implementations
   ~Sphere();
   std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
-  std::optional<Algebrick::Vec3d> normal(const Algebrick::Point3d &p) const override;
+  std::optional<Algebrick::Vec3d>
+  normal(const Algebrick::Point3d &p) const override;
   double get_reflection() const override;
   Light::Intensity get_dif_int() const override;
   Light::Intensity get_espec_int() const override;
   Light::Intensity get_env_int() const override;
+  void translate(const Algebrick::Vec3d &offset) override;
 
   // setters
   void set_reflection(double k);

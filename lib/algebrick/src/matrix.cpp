@@ -41,6 +41,13 @@ Matrix::Matrix(std::initializer_list<Point3d> lst)
   }
 }
 
+Matrix Matrix::translation(const Vec3d &offset) {
+  return {{1, 0, 0, offset.x},
+          {0, 1, 0, offset.y},
+          {0, 0, 1, offset.z},
+          {0, 0, 0, 1}};
+}
+
 size_t Matrix::get_lines() const { return m; }
 size_t Matrix::get_cols() const { return n; }
 double &Matrix::get(size_t i, size_t j) {

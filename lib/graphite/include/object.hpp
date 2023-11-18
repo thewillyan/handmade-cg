@@ -36,6 +36,13 @@ public:
   virtual Light::Intensity get_espec_int() const = 0;
   virtual Light::Intensity get_env_int() const = 0;
 
+  // transformations
+  virtual void translate(const Algebrick::Vec3d &offset) = 0;
+
+  // TODO:
+  // rotation
+  // scale
+
   // setters
   void set_visible(bool v) { visible = v; };
 };

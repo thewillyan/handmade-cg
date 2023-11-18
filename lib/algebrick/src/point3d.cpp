@@ -12,6 +12,14 @@ Vec3d Point3d::operator+(const Point3d &other) const {
 Vec3d Point3d::operator-(const Point3d &other) const {
   return {x - other.x, y - other.y, z - other.z};
 }
+
+Point3d &Point3d::operator+=(const Point3d &other) {
+  x += other.x;
+  y += other.y;
+  z += other.z;
+  return *this;
+}
+
 Point3d::operator Vec3d() const { return Vec3d(x, y, z); }
 
 std::ostream &Algebrick::operator<<(std::ostream &out, const Point3d &p) {

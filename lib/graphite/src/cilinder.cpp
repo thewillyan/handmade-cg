@@ -118,3 +118,9 @@ double Cilinder::get_reflection() const { return shineness; }
 Light::Intensity Cilinder::get_dif_int() const { return dif; }
 Light::Intensity Cilinder::get_espec_int() const { return spec; }
 Light::Intensity Cilinder::get_env_int() const { return env; }
+
+void Cilinder::translate(const Algebrick::Vec3d &offset) {
+  base_center += offset;
+  base.translate(offset);
+  top.translate(offset);
+}

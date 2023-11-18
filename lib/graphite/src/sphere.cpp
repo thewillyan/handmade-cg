@@ -59,3 +59,5 @@ void Sphere::set_reflection(double k) { reflect = k; }
 Light::Intensity Sphere::get_dif_int() const { return dif; }
 Light::Intensity Sphere::get_espec_int() const { return espec; }
 Light::Intensity Sphere::get_env_int() const { return env; }
+
+void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
