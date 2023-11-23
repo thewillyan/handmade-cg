@@ -1,13 +1,14 @@
 #include "algebrick/include/point3d.hpp"
+#include "algebrick/include/vec3d.hpp"
 #include "graphite/include/canvas.hpp"
 #include "graphite/include/cilinder.hpp"
+#include "graphite/include/cone.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/light_point.hpp"
 #include "graphite/include/plane.hpp"
 #include "graphite/include/scene.hpp"
 #include "graphite/include/space.hpp"
 #include "graphite/include/sphere.hpp"
-#include "graphite/include/triangular_plane.hpp"
 #include <cmath>
 #include <cstddef>
 
@@ -30,30 +31,33 @@ int main() {
 
   // create cilinder
   Graphite::Light::Intensity cilinder_k{0.2, 0.3, 0.8};
-  Algebrick::Vec3d cylinder_dir{0, 1, 0};
+  Algebrick::Vec3d cylinder_dir{-1 / std::sqrt(3), 1 / std::sqrt(3),
+                                -1 / std::sqrt(3)};
   double cylinder_height = 3 * radius;
   double cylinder_radius = radius / 3;
   auto cilinder = new Graphite::Cilinder(sphere_center, cylinder_dir,
                                          cylinder_radius, cylinder_height, 10,
                                          cilinder_k, cilinder_k, cilinder_k);
-  cilinder->translate({0, -30, 0});
+
+  double cone_radius = 1.5 * radius;
+  double cone_height = radius / 3;
+  Graphite::Light::Intensity cone_k{0.8, 0.3, 0.2};
+  Algebrick::Point3d cone_center =
+      sphere_center + cylinder_dir * cylinder_height;
+  auto *cone = new Graphite::Cone(cone_height, cone_radius, cone_center,
+                                  cylinder_dir, 10, cone_k, cone_k, cone_k);
 
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   // create planes
   Graphite::Light::Intensity floor_k{0.2, 0.7, 0.2};
   SDL_Color floor_color = {0, 0, 0, 255};
-  Graphite::Plane *floor = new Graphite::Plane(
-      {0, -radius, 0}, {0, 1, 0}, floor_color, 1, floor_k, floor_k, no_ambient);
+  auto *floor = new Graphite::Plane({0, -radius, 0}, {0, 1, 0}, floor_color, 1,
+                                    floor_k, floor_k, no_ambient);
 
   Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
   SDL_Color wall_color = {0, 0, 0, 255};
-  Graphite::Plane *wall = new Graphite::Plane(
-      {0, 0, -200}, {0, 0, 1}, wall_color, 1, wall_k, wall_k, no_ambient);
-
-  Graphite::TriangularPlane *tp = new Graphite::TriangularPlane(
-      {-20, 5, -100}, {20, 5, -100}, {0, 35, -100}, 10, ball_k, ball_k, ball_k);
-  tp->translate({0, 0, 50});
-  tp->scale(0.04);
+  auto *wall = new Graphite::Plane({0, 0, -200}, {0, 0, 1}, wall_color, 1,
+                                   wall_k, wall_k, no_ambient);
 
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});
@@ -62,9 +66,9 @@ int main() {
   // create space
   auto objs = Graphite::Space();
   objs.set_ambient_light({0.3, 0.3, 0.3});
-  // objs.add_obj(red_ball);
+  objs.add_obj(red_ball);
   objs.add_obj(cilinder);
-  objs.add_obj(tp);
+  objs.add_obj(cone);
   objs.add_obj(floor);
   objs.add_obj(wall);
   objs.add_light(light);
