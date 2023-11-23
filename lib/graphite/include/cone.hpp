@@ -31,16 +31,18 @@ public:
        Algebrick::Vec3d n, double shiness, Light::Intensity env,
        Light::Intensity esp, Light::Intensity dif);
 
-  virtual std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
+  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
 
-  virtual std::optional<Algebrick::Vec3d>
-  normal(const Algebrick::Point3d &p) const;
+  std::optional<Algebrick::Vec3d>
+  normal(const Algebrick::Point3d &p) const override;
+  void translate(const Algebrick::Vec3d &offset) override;
+  void scale(double k) override;
 
   // getters
-  virtual double get_reflection() const;
-  virtual Light::Intensity get_dif_int() const;
-  virtual Light::Intensity get_espec_int() const;
-  virtual Light::Intensity get_env_int() const;
+  double get_reflection() const override;
+  Light::Intensity get_dif_int() const override;
+  Light::Intensity get_espec_int() const override;
+  Light::Intensity get_env_int() const override;
 };
 } // namespace Graphite
 

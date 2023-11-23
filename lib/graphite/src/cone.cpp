@@ -25,68 +25,100 @@ Cone::Cone(double h, double r, Algebrick::Point3d base_center,
       shiness{shiness}, env{env}, espec{esp}, dif{dif} {}
 
 std::optional<PointColor> Cone::intersect(const Algebrick::Ray &ray) const {
-  Algebrick::Vec3d v =
-      (ray.source() - center) - norm * ((ray.source() - center) * norm);
+  Algebrick::Vec3d w = ray.source() - center;
+  double beta = std::pow(height, 2) / std::pow(radius, 2);
+  double dr_dc = ray.direction() * norm;
+  double w_dr = w * ray.direction();
+  double w_dc = w * norm;
 
-  double cos_sqr = std::pow(std::cos(aperture), 2);
-  double a = std::pow(ray.direction() * norm, 2) -
-             (ray.direction() * ray.direction()) * cos_sqr;
-  double b = ((ray.direction() * v) * cos_sqr) -
-             ((v * norm) * (ray.direction() * norm));
-  double c = std::pow(v * norm, 2) - ((v * v) * cos_sqr);
+  double a = beta - std::pow(dr_dc, 2) * (beta + 1);
+  double b = 2 * (beta * (w_dr - w_dc * dr_dc) - w_dc * dr_dc + height * dr_dc);
+  double c = beta * (w * w) - std::pow(w_dc, 2) * (beta + 1) -
+             std::pow(height, 2) + 2 * height * w_dc;
 
-  double delta = std::pow(b, 2) - (4 * a * c);
-
-  // No intersection
-  if (delta < 0)
+  double delta = std::pow(b, 2) - 4 * a * c;
+  if (delta < 0) {
     return {};
+  }
 
-  std::vector<std::pair<double, Algebrick::Point3d>> valid_points;
-
-  double t1 = (-b + sqrt(delta)) / (2 * a);
-  if (t1 >= 0) {
+  if (delta == 0) {
+    double t1 = (-b) / (2 * a);
+    double v_dc =
+        (center * (-1) + (ray.source() + ray.direction() * t1)) * norm;
+    if (v_dc < 0 || v_dc > height) {
+      return {};
+    }
     Algebrick::Point3d p1 = ray.source() + ray.direction() * t1;
-    double inside_p1 = (p1 - center) * norm;
-
-    if (inside_p1 >= 0 && inside_p1 <= height)
-      valid_points.push_back(std::make_pair(t1, p1));
+    return std::make_pair(std::move(p1), SDL_Color{0, 0, 0, 0});
   }
 
-  double t2 = (-b - sqrt(delta)) / (2 * a);
-  if (t2 >= 0) {
-    Algebrick::Point3d p2 = ray.source() + ray.direction() * t2;
-    double inside_p2 = (p2 - center) * norm;
+  double t1 = (-b + std::sqrt(delta)) / (2 * a);
+  double t2 = (-b - std::sqrt(delta)) / (2 * a);
 
-    if (inside_p2 >= 0 && inside_p2 <= height)
-      valid_points.push_back(std::make_pair(t2, p2));
+  double v_dc = (center * (-1) + (ray.source() + ray.direction() * t1)) * norm;
+  if (v_dc < 0 || v_dc > height) {
+    t1 = -1;
   }
 
-  auto intersected_base = base.intersect(ray);
-
-  if (intersected_base.has_value()) {
-    double t = (intersected_base->first - ray.source()).length();
-    valid_points.push_back(std::make_pair(t, intersected_base->first));
+  v_dc = (center * (-1) + (ray.source() + ray.direction() * t2)) * norm;
+  if (v_dc < 0 || v_dc > height) {
+    t2 = -1;
   }
 
-  double min = INFINITY;
-  Algebrick::Point3d best_point = ray.source();
+  if (t1 < 0 && t2 < 0) {
+    return {};
+  }
 
-  for (auto const &p : valid_points) {
-    if (p.first < min) {
-      min = p.first;
-      best_point = p.second;
+  if (t1 >= 0 && t2 >= 0) {
+    double max = std::min(t1, t2);
+    Algebrick::Point3d p1 = ray.source() + ray.direction() * max;
+    return std::make_pair(std::move(p1), SDL_Color{0, 0, 0, 0});
+  }
+
+  auto p_int_base = base.intersect(ray);
+  if (p_int_base.has_value()) {
+    double v = (p_int_base->first - center).length();
+    if (v > radius) {
+      p_int_base = {};
     }
   }
 
-  return min == INFINITY ? std::optional<PointColor>{}
-                         : std::make_pair(best_point, SDL_Color{0, 0, 0, 0});
+  if (p_int_base.has_value()) {
+    double t_int = std::max(t1, t2);
+    double t_int_base = (p_int_base->first - ray.source()).length();
+    if (t_int_base < t_int) {
+      return p_int_base;
+    }
+    Algebrick::Point3d p1 = ray.source() + ray.direction() * t_int;
+    return std::make_pair(std::move(p1), SDL_Color{0, 0, 0, 0});
+  }
+  return {};
 }
 
 std::optional<Algebrick::Vec3d>
 Cone::normal(const Algebrick::Point3d &p) const {
-  auto pi = p - top;
-  auto normal = ((norm.cross(pi)).cross(pi)).norm();
-  return normal;
+  Algebrick::Vec3d v_p = top - p;
+  Algebrick::Vec3d v = p - center;
+  double v_dc = v * norm;
+  Algebrick::Vec3d n;
+
+  if (auto err = 1e-12; err < v_dc) {
+    n = (v_p.cross(norm).cross(v_p)).norm();
+  } else {
+    n = norm * -1;
+  }
+  return n;
+}
+
+void Cone::translate(const Algebrick::Vec3d &offset) {
+  center += offset;
+  top += offset;
+  base.translate(offset);
+}
+
+void Cone::scale(double k) {
+  height *= k;
+  base.scale(k);
 }
 
 // getters
