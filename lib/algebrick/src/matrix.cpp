@@ -17,6 +17,9 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
                                                                        0.0)} {
   size_t i = 0;
   for (auto &line : lst) {
+    if (line.size() != m) {
+      throw std::invalid_argument("Initializer list is not a valid matrix.");
+    }
     size_t j = 0;
     for (double num : line) {
       elems[idx(i, j++)] = num;
