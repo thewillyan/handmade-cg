@@ -18,6 +18,7 @@ private:
   constexpr size_t idx(size_t, size_t) const;
 
 public:
+  Matrix(size_t);
   Matrix(size_t, size_t);
   Matrix(std::initializer_list<std::initializer_list<double>>);
   Matrix(std::initializer_list<Vec3d>);
@@ -29,6 +30,8 @@ public:
   const double &get(size_t, size_t) const;
 
   // special matrices
+  static Matrix inv(Matrix);
+  static Matrix identity(size_t);
   static Matrix translation(const Vec3d &offset);
 
   Matrix operator*(const Matrix &) const;
