@@ -21,7 +21,6 @@ public:
   Matrix(size_t);
   Matrix(size_t, size_t);
   Matrix(std::initializer_list<std::initializer_list<double>> &&);
-  Matrix(const Matrix &);
 
   size_t get_lines() const;
   size_t get_cols() const;
@@ -31,13 +30,12 @@ public:
 
   // special matrices
   static Matrix transpose(Matrix);
-  static Matrix inv(const Matrix &);
+  static Matrix inv(Matrix);
   static Matrix identity(size_t);
   static Matrix translation(const Vec3d &offset);
 
   Matrix operator*(const Matrix &) const;
   Matrix operator*(const Vec3d &) const;
-  Matrix &operator=(Matrix &&);
 };
 } // namespace Algebrick
 
