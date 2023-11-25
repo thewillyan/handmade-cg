@@ -30,6 +30,7 @@ public:
   // transformtions
   void translate(const Algebrick::Vec3d &offset);
   void scale(double k);
+  void transform(const Algebrick::Matrix &matrix) override;
 
   // getters
   virtual double get_reflection() const;

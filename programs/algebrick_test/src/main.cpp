@@ -27,7 +27,7 @@ int main() {
   std::cout << "p - q = " << (p - q) << std::endl;
 
   Algebrick::Matrix m = {{3, 2}, {4, 3}};
-  Algebrick::Matrix inv = Algebrick::Matrix::inv(m) * m;
+  Algebrick::Matrix inv = m;
   for (size_t i = 0; i < inv.get_lines(); ++i) {
     std::cout << "| ";
     for (size_t j = 0; j < inv.get_cols(); ++j) {

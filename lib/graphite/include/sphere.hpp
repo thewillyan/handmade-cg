@@ -2,6 +2,7 @@
 #define Graphite_Sphere_Obj
 
 #include "../../algebrick/include/point3d.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "graphite/include/intensity.hpp"
 #include "object.hpp"
 #include <SDL2/SDL_pixels.h>
@@ -35,6 +36,7 @@ public:
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;
   void scale(double k) override;
+  void transform(const Algebrick::Matrix &matrix) override;
 
   // setters
   void set_reflection(double k);

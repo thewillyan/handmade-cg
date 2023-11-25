@@ -3,6 +3,7 @@
 
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "intensity.hpp"
 #include "light.hpp"
 #include "object.hpp"
@@ -19,6 +20,7 @@ private:
   std::vector<Object *> objs;
   std::vector<Light::Source *> lights;
   Light::Intensity ambient_light;
+  Algebrick::Matrix transform;
 
 public:
   Space();
@@ -28,6 +30,8 @@ public:
   void add_obj(Object *);
   void add_light(Light::Source *);
   void set_ambient_light(Light::Intensity i);
+  void set_transform(Algebrick::Matrix m);
+  void reset_transform();
 
   Light::Intensity light_intensity(const Object &obj, const PointColor &inter,
                                    const Algebrick::Ray &eye_ray) const;

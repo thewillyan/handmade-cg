@@ -1,21 +1,26 @@
 #include "../include/space.hpp"
-#include "../../algebrick/include/point3d.hpp"
-#include "../../algebrick/include/ray.hpp"
 #include "../include/object.hpp"
+#include "algebrick/include/matrix.hpp"
+#include "algebrick/include/point3d.hpp"
+#include "algebrick/include/ray.hpp"
 #include "graphite/include/intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
 #include <initializer_list>
+#include <iostream>
 #include <optional>
 #include <utility>
 #include <vector>
 
 using namespace Graphite;
 
-Space::Space() : objs{std::vector<Object *>()}, ambient_light{1, 1, 1} {}
+Space::Space()
+    : objs{std::vector<Object *>()},
+      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
 Space::Space(std::initializer_list<Object *> lst)
-    : objs{std::vector(lst)}, ambient_light{1, 1, 1} {}
+    : objs{std::vector(lst)},
+      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
 Space::~Space() {}
 
 void Space::add_obj(Object *obj) { objs.push_back(obj); }
@@ -30,6 +35,19 @@ Light::Intensity Space::light_intensity(const Object &obj,
     total = total + l->get_intensity(obj, objs, inter, eye_ray);
   }
   return total;
+}
+void Space::set_transform(Algebrick::Matrix m) {
+  Algebrick::Matrix final_transform = Algebrick::Matrix::inv(transform) * m;
+  transform = std::move(m);
+  for (Object *obj : objs) {
+    obj->transform(final_transform);
+  }
+}
+void Space::reset_transform() {
+  Algebrick::Matrix inv = Algebrick::Matrix::inv(transform);
+  for (Object *obj : objs) {
+    obj->transform(inv);
+  }
 }
 
 std::optional<PointColor> Space::intersect(const Algebrick::Ray &ray) const {

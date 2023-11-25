@@ -2,23 +2,24 @@
 #include "../include/vec3d.hpp"
 #include <cstddef>
 #include <initializer_list>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
 using namespace Algebrick;
 
-constexpr size_t Matrix::idx(size_t i, size_t j) const { return (i * m) + j; }
+constexpr size_t Matrix::idx(size_t i, size_t j) const { return (i * n) + j; }
 
 Matrix::Matrix(size_t size)
-    : m{size}, n{size}, elems{std::vector<double>(n * n, 0.0)} {}
+    : m{size}, n{size}, elems{std::vector<double>(size * size, 0.0)} {}
 Matrix::Matrix(size_t lines, size_t cols)
-    : m{lines}, n{cols}, elems{std::vector<double>(m * n, 0.0)} {}
-Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
-    : m{lst.size()}, n{lst.begin()->size()}, elems{std::vector<double>(m * n,
-                                                                       0.0)} {
+    : m{lines}, n{cols}, elems{std::vector<double>(lines * cols, 0.0)} {}
+Matrix::Matrix(std::initializer_list<std::initializer_list<double>> &&lst)
+    : m{lst.size()}, n{lst.begin()->size()} {
+  elems.reserve(m * n);
   size_t i = 0;
   for (auto &line : lst) {
-    if (line.size() != m) {
+    if (line.size() != n) {
       throw std::invalid_argument("Initializer list is not a valid matrix.");
     }
     size_t j = 0;
@@ -28,48 +29,55 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> lst)
     ++i;
   }
 }
-
-Matrix::Matrix(std::initializer_list<Vec3d> lst)
-    : m{lst.size()}, n{3}, elems{std::vector<double>(m * n)} {
-  size_t i = 0;
-  for (auto &v : lst) {
-    elems[idx(i, 0)] = v.x;
-    elems[idx(i, 1)] = v.y;
-    elems[idx(i, 2)] = v.z;
-    ++i;
-  }
+Matrix &Matrix::operator=(Matrix &&other) {
+  m = other.m;
+  n = other.n;
+  elems.swap(other.elems);
+  return *this;
 }
-Matrix::Matrix(std::initializer_list<Point3d> lst)
-    : m{lst.size()}, n{3}, elems{std::vector<double>(m * n)} {
-  size_t i = 0;
-  for (auto &p : lst) {
-    elems[idx(i, 0)] = p.x;
-    elems[idx(i, 1)] = p.y;
-    elems[idx(i, 2)] = p.z;
-    ++i;
+Matrix::Matrix(const Matrix &other)
+    : m{other.m}, n{other.n}, elems{other.elems} {
+  std::cerr << other.elems.size() << std::endl;
+}
+bool Matrix::is_identity() const {
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      double x = this->get(i, j);
+      if ((i == j && x != 1) || (i != j && x != 0)) {
+        return false;
+      }
+    }
   }
+  return true;
 }
 
 Matrix Matrix::transpose(Matrix matrix) {
+  Matrix t = Matrix(matrix.get_cols(), matrix.get_lines());
   for (size_t i = 0; i < matrix.get_lines(); ++i) {
     for (size_t j = 0; j < matrix.get_cols(); ++j) {
-      std::swap(matrix.get(i, j), matrix.get(j, i));
+      t.get(j, i) = matrix.get(i, j);
     }
   }
   return matrix;
 }
 
-Matrix Matrix::inv(Matrix matrix) {
-  if (matrix.get_lines() != matrix.get_cols()) {
+Matrix Matrix::inv(const Matrix &mat) {
+  if (mat.get_lines() != mat.get_cols()) {
     throw std::invalid_argument(
         "Can't calculate the invert of an non-square matrix.");
   }
+  Matrix matrix = mat;
   size_t size = matrix.get_lines();
   Matrix inv = Matrix::identity(size);
+  std::cerr << "matrix size: " << matrix.get_lines() << 'x' << matrix.get_cols()
+            << std::endl;
+  std::cerr << matrix.elems.size() << std::endl;
 
   // turns `matrix` into upper triangular
   for (size_t p = 0; p < size; ++p) {
+    std::cerr << "here 1\n";
     double pivot = matrix.get(p, p);
+    std::cerr << "here 2\n";
     for (size_t i = p + 1; i < size; ++i) {
       double x = matrix.get(i, p);
       if (x == 0) {
@@ -105,6 +113,7 @@ Matrix Matrix::inv(Matrix matrix) {
       }
     }
   }
+  std::cerr << "here 3\n";
 
   return inv;
 }
@@ -146,6 +155,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
   for (size_t i = 0; i < m; ++i) {
     for (size_t j = 0; j < other.get_cols(); ++j) {
       double &sum = mul_mat.get(i, j);
+      sum = 0;
       for (size_t k = 0; k < other.get_lines(); ++k) {
         sum += get(i, k) * other.get(k, j);
       }
@@ -159,7 +169,7 @@ Matrix Matrix::operator*(const Vec3d &other) const {
     throw std::out_of_range("The number of columns of the first matrix is \
         not equal to 3.");
 
-  Matrix mul_mat = Matrix(n, 3);
+  Matrix mul_mat = Matrix(m, 3);
   for (size_t i = 0; i < m; ++i) {
     mul_mat.get(i, 0) =
         (other.x * get(i, 0)) + (other.y * get(i, 1)) + (other.z * get(i, 2));
