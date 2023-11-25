@@ -25,7 +25,7 @@ Intensity Point::get_intensity(const Object &inter_obj,
 
   Algebrick::Ray light_ray{p, inter.first};
   for (auto &obj : objs) {
-    if (obj != &inter_obj) {
+    if (obj->get_id() != inter_obj.get_id()) {
       auto other_inter = obj->intersect(light_ray);
       if (other_inter.has_value()) {
         Algebrick::Vec3d other_inter_vec = (other_inter->first - p);

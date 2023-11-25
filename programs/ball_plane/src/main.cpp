@@ -24,7 +24,7 @@ int main() {
   auto red_ball =
       new Graphite::Sphere(center, radius, color, ball_k, ball_k, ball_k);
   red_ball->set_reflection(10);
-  red_ball->translate({100, 0, 0});
+  // red_ball->translate({100, 0, 0});
 
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   // create planes
@@ -43,11 +43,8 @@ int main() {
   light->set_decay(1e-5, 6e-3, 0.1);
 
   // create space
-  auto objs = Graphite::Space();
+  Graphite::Space objs = {floor, wall, red_ball};
   objs.set_ambient_light({0.3, 0.3, 0.3});
-  objs.add_obj(red_ball);
-  objs.add_obj(floor);
-  objs.add_obj(wall);
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});

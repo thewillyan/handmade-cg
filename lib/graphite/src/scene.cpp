@@ -5,6 +5,7 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
+#include <iostream>
 #include <optional>
 
 using namespace Graphite;
@@ -24,9 +25,11 @@ const Algebrick::Vec3d &FrameRef::z_axis() const { return z; }
 const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
 // special methods
-Algebrick::Matrix FrameRef::perspective_matrix() {
-  Algebrick::Matrix transf = {
-      {x.x, x.y, x.z, 0}, {y.x, y.y, y.z, 0}, {z.x, z.y, z.z, 0}, {0, 0, 0, 1}};
+Algebrick::Matrix FrameRef::perspective_matrix() const {
+  Algebrick::Matrix transf = {{x.x, x.y, x.z, 0},
+                              {y.x, y.y, y.z, 0},
+                              {z.x, z.y, -z.z, 0},
+                              {0, 0, 0, 1}};
   Algebrick::Matrix transl = {
       {1, 0, 0, -o.x}, {0, 1, 0, -o.y}, {0, 0, 1, -o.z}, {0, 0, 0, 1}};
   return transf * transl;
@@ -34,12 +37,8 @@ Algebrick::Matrix FrameRef::perspective_matrix() {
 
 Scene::Scene(Space *s)
     : space{s}, bg{}, mode{RenderMode::PERSPECTIVE}, oblique_dir{0, 0, 0} {};
-Scene::Scene(Space *s, FrameRef e)
-    : eye_pov{e}, space{s}, bg{}, mode{RenderMode::PERSPECTIVE}, oblique_dir{
-                                                                     0, 0,
-                                                                     0} {};
-Scene::Scene(Space *s, FrameRef e, RenderMode m)
-    : eye_pov{e}, space{s}, bg{}, mode{m}, oblique_dir{0, 0, 0} {};
+Scene::Scene(Space *s, RenderMode m)
+    : space{s}, bg{}, mode{m}, oblique_dir{0, 0, 0} {};
 Scene::~Scene() {}
 
 // getters
@@ -50,6 +49,7 @@ std::optional<SDL_Color> Scene::get_bg_color() const { return bg; }
 void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
 void Scene::set_render_mode(const RenderMode m) { mode = m; }
+void Scene::set_eye_pov(FrameRef &&pov) { eye_pov = pov; }
 
 void Scene::render(Canvas &c, double d) const {
   const double pov_w = c.get_pov_width();
@@ -60,6 +60,11 @@ void Scene::render(Canvas &c, double d) const {
   const double dy = pov_h / c.get_height();
   const double half_dx = dx / 2;
   const double half_dy = dy / 2;
+
+  if (mode == RenderMode::PERSPECTIVE) {
+    Algebrick::Matrix perspective = eye_pov.perspective_matrix();
+    space->set_transform(perspective);
+  }
 
   for (size_t i = 0; i < c.get_width(); ++i) {
     const double x = -half_w + half_dx + static_cast<double>(i) * dx;
@@ -92,5 +97,9 @@ void Scene::render(Canvas &c, double d) const {
         c.set_pixel(canvas_point, *color);
       }
     }
+  }
+
+  if (mode == RenderMode::PERSPECTIVE) {
+    space->reset_transform();
   }
 }

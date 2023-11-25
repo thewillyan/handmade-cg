@@ -4,6 +4,7 @@
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
 #include "../../algebrick/include/vec3d.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "graphite/include/intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
@@ -39,6 +40,7 @@ public:
   // transformations
   virtual void translate(const Algebrick::Vec3d &offset) = 0;
   virtual void scale(double k) = 0;
+  virtual void transform(const Algebrick::Matrix &matrix) = 0;
 
   // TODO:
   // rotation

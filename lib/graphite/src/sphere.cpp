@@ -1,11 +1,14 @@
 #include "graphite/include/sphere.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/ray.hpp"
+#include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <utility>
 
 using namespace Graphite;
@@ -62,3 +65,8 @@ Light::Intensity Sphere::get_env_int() const { return env; }
 
 void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
 void Sphere::scale(double k) { radius *= k; }
+void Sphere::transform(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix center_4d = {{center.x}, {center.y}, {center.z}, {1.0}};
+  Algebrick::Matrix new_center = matrix * center_4d;
+  center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
+}

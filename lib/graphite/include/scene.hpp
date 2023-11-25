@@ -32,12 +32,12 @@ public:
   const Algebrick::Point3d &origin() const;
 
   // special methods
-  Algebrick::Matrix perspective_matrix();
+  Algebrick::Matrix perspective_matrix() const;
 };
 
 class Scene {
 private:
-  const FrameRef space_ref;
+  // const FrameRef space_ref;
   FrameRef eye_pov;
   Space *space;
   std::optional<SDL_Color> bg;
@@ -46,8 +46,7 @@ private:
 
 public:
   Scene(Space *);
-  Scene(Space *, FrameRef);
-  Scene(Space *, FrameRef, RenderMode);
+  Scene(Space *, RenderMode);
   ~Scene();
 
   // getters
@@ -59,6 +58,7 @@ public:
   void set_bg_color(SDL_Color);
   void set_render_mode(const RenderMode);
   void set_oblique_dir(const Algebrick::Vec3d &);
+  void set_eye_pov(FrameRef &&);
 
   void render(Canvas &, double) const;
 };

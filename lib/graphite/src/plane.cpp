@@ -41,3 +41,12 @@ Light::Intensity Plane::get_env_int() const { return env; }
 
 void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }
 void Plane::scale([[maybe_unused]] double k) {}
+void Plane::transform(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix point_4d = {{point.x}, {point.y}, {point.z}, {1.0}};
+  Algebrick::Matrix new_point = matrix * point_4d;
+  point = {new_point.get(0, 0), new_point.get(1, 0), new_point.get(2, 0)};
+
+  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {1.0}};
+  Algebrick::Matrix new_norm = matrix * norm_4d;
+  norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
+}
