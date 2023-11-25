@@ -2,9 +2,9 @@
 #include "../include/vec3d.hpp"
 #include <cstddef>
 #include <initializer_list>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 
 using namespace Algebrick;
 
@@ -15,8 +15,7 @@ Matrix::Matrix(size_t size)
 Matrix::Matrix(size_t lines, size_t cols)
     : m{lines}, n{cols}, elems{std::vector<double>(lines * cols, 0.0)} {}
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> &&lst)
-    : m{lst.size()}, n{lst.begin()->size()} {
-  elems.reserve(m * n);
+    : m{lst.size()}, n{lst.begin()->size()}, elems{std::vector<double>(n * m)} {
   size_t i = 0;
   for (auto &line : lst) {
     if (line.size() != n) {
@@ -28,16 +27,6 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> &&lst)
     }
     ++i;
   }
-}
-Matrix &Matrix::operator=(Matrix &&other) {
-  m = other.m;
-  n = other.n;
-  elems.swap(other.elems);
-  return *this;
-}
-Matrix::Matrix(const Matrix &other)
-    : m{other.m}, n{other.n}, elems{other.elems} {
-  std::cerr << other.elems.size() << std::endl;
 }
 bool Matrix::is_identity() const {
   for (size_t i = 0; i < m; ++i) {
@@ -61,23 +50,17 @@ Matrix Matrix::transpose(Matrix matrix) {
   return matrix;
 }
 
-Matrix Matrix::inv(const Matrix &mat) {
-  if (mat.get_lines() != mat.get_cols()) {
+Matrix Matrix::inv(Matrix matrix) {
+  if (matrix.get_lines() != matrix.get_cols()) {
     throw std::invalid_argument(
         "Can't calculate the invert of an non-square matrix.");
   }
-  Matrix matrix = mat;
   size_t size = matrix.get_lines();
   Matrix inv = Matrix::identity(size);
-  std::cerr << "matrix size: " << matrix.get_lines() << 'x' << matrix.get_cols()
-            << std::endl;
-  std::cerr << matrix.elems.size() << std::endl;
 
   // turns `matrix` into upper triangular
   for (size_t p = 0; p < size; ++p) {
-    std::cerr << "here 1\n";
     double pivot = matrix.get(p, p);
-    std::cerr << "here 2\n";
     for (size_t i = p + 1; i < size; ++i) {
       double x = matrix.get(i, p);
       if (x == 0) {
@@ -113,7 +96,6 @@ Matrix Matrix::inv(const Matrix &mat) {
       }
     }
   }
-  std::cerr << "here 3\n";
 
   return inv;
 }
