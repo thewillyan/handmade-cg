@@ -76,7 +76,7 @@ void Scene::render(Canvas &c, double d) const {
 
       switch (mode) {
       case RenderMode::PERSPECTIVE: {
-        ray = new Algebrick::Ray{eye_pov.origin(), p};
+        ray = new Algebrick::Ray{{0, 0, 0}, p};
         break;
       }
       case RenderMode::ORTHOGRAPHIC: {
@@ -97,9 +97,5 @@ void Scene::render(Canvas &c, double d) const {
         c.set_pixel(canvas_point, *color);
       }
     }
-  }
-
-  if (mode == RenderMode::PERSPECTIVE) {
-    space->reset_transform();
   }
 }
