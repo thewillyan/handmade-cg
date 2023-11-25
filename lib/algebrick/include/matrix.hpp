@@ -30,6 +30,7 @@ public:
   const double &get(size_t, size_t) const;
 
   // special matrices
+  static Matrix transpose(Matrix);
   static Matrix inv(Matrix);
   static Matrix identity(size_t);
   static Matrix translation(const Vec3d &offset);
