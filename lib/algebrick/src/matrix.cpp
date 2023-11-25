@@ -2,6 +2,7 @@
 #include "../include/vec3d.hpp"
 #include <cstddef>
 #include <initializer_list>
+#include <memory>
 #include <stdexcept>
 
 using namespace Algebrick;
@@ -47,6 +48,15 @@ Matrix::Matrix(std::initializer_list<Point3d> lst)
     elems[idx(i, 2)] = p.z;
     ++i;
   }
+}
+
+Matrix Matrix::transpose(Matrix matrix) {
+  for (size_t i = 0; i < matrix.get_lines(); ++i) {
+    for (size_t j = 0; j < matrix.get_cols(); ++j) {
+      std::swap(matrix.get(i, j), matrix.get(j, i));
+    }
+  }
+  return matrix;
 }
 
 Matrix Matrix::inv(Matrix matrix) {
