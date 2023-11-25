@@ -5,6 +5,7 @@
 #include "../../algebrick/include/vec3d.hpp"
 #include "../include/canvas.hpp"
 #include "../include/space.hpp"
+#include "algebrick/include/matrix.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
 
@@ -29,6 +30,9 @@ public:
   const Algebrick::Vec3d &y_axis() const;
   const Algebrick::Vec3d &z_axis() const;
   const Algebrick::Point3d &origin() const;
+
+  // special methods
+  Algebrick::Matrix perspective_matrix();
 };
 
 class Scene {

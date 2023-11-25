@@ -1,6 +1,7 @@
 #include "../include/scene.hpp"
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
+#include "algebrick/include/matrix.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
@@ -22,11 +23,21 @@ const Algebrick::Vec3d &FrameRef::y_axis() const { return y; }
 const Algebrick::Vec3d &FrameRef::z_axis() const { return z; }
 const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
+// special methods
+Algebrick::Matrix FrameRef::perspective_matrix() {
+  Algebrick::Matrix transf = {
+      {x.x, x.y, x.z, 0}, {y.x, y.y, y.z, 0}, {z.x, z.y, z.z, 0}, {0, 0, 0, 1}};
+  Algebrick::Matrix transl = {
+      {1, 0, 0, -o.x}, {0, 1, 0, -o.y}, {0, 0, 1, -o.z}, {0, 0, 0, 1}};
+  return transf * transl;
+}
+
 Scene::Scene(Space *s)
     : space{s}, bg{}, mode{RenderMode::PERSPECTIVE}, oblique_dir{0, 0, 0} {};
 Scene::Scene(Space *s, FrameRef e)
-    : eye_pov{e}, space{s}, bg{}, mode{RenderMode::PERSPECTIVE},
-      oblique_dir{0, 0, 0} {};
+    : eye_pov{e}, space{s}, bg{}, mode{RenderMode::PERSPECTIVE}, oblique_dir{
+                                                                     0, 0,
+                                                                     0} {};
 Scene::Scene(Space *s, FrameRef e, RenderMode m)
     : eye_pov{e}, space{s}, bg{}, mode{m}, oblique_dir{0, 0, 0} {};
 Scene::~Scene() {}
