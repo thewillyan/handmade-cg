@@ -49,6 +49,9 @@ Face::Face(Edge &e) : head{&e} {}
 PolygonMesh::PolygonMesh() {}
 
 void PolygonMesh::add_face(Algebrick::Point3d points[3]) {
+  // TODO: verify if have the edges v0 <- v1, v1 <- v2, v2 <- v0
+  // and then update its twins.
+
   // v0
   // | \
   // |f \
