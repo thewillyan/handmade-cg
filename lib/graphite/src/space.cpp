@@ -16,11 +16,11 @@
 using namespace Graphite;
 
 Space::Space()
-    : objs{std::vector<Object *>()},
-      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector<Object *>()}, ambient_light{1, 1, 1},
+      transform{Algebrick::Matrix::identity(4)} {}
 Space::Space(std::initializer_list<Object *> lst)
-    : objs{std::vector(lst)},
-      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector(lst)}, ambient_light{1, 1, 1},
+      transform{Algebrick::Matrix::identity(4)} {}
 Space::~Space() {}
 
 void Space::add_obj(Object *obj) { objs.push_back(obj); }
@@ -37,10 +37,12 @@ Light::Intensity Space::light_intensity(const Object &obj,
   return total;
 }
 void Space::set_transform(Algebrick::Matrix m) {
-  Algebrick::Matrix final_transform = Algebrick::Matrix::inv(transform) * m;
-  transform = std::move(m);
+  //TODO: invert transform
   for (Object *obj : objs) {
-    obj->transform(final_transform);
+    obj->transform(m);
+  }
+  for (Light::Source *l : lights) {
+    l->transform(m);
   }
 }
 void Space::reset_transform() {

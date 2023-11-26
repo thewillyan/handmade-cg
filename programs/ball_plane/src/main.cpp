@@ -48,6 +48,7 @@ int main() {
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
+  scene.set_eye_pov({{50, 80, 0}, {50, 100, -2}, center});
 
   // render
   scene.render(canvas, canvas_dist);
