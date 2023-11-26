@@ -21,6 +21,7 @@ public:
   Intensity get_intensity(const Object &obj, std::vector<Object *> objs,
                           const PointColor &inter,
                           const Algebrick::Ray &eye_ray) const override;
+  void transform(const Algebrick::Matrix &m) override;
 };
 
 } // namespace Graphite::Light

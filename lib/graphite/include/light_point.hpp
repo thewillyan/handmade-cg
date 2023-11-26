@@ -23,6 +23,7 @@ public:
                           const Algebrick::Ray &eye_ray) const override;
   // setters
   void set_decay(double a, double b, double c);
+  void transform(const Algebrick::Matrix &m) override;
 };
 
 } // namespace Graphite::Light

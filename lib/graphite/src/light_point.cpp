@@ -58,3 +58,9 @@ Intensity Point::get_intensity(const Object &inter_obj,
       (decay.x * std::pow(L.length(), 2)) + (decay.y * L.length()) + decay.z;
   return (i_dif + i_esp) / d;
 }
+
+void Point::transform(const Algebrick::Matrix &m) {
+  Algebrick::Matrix point_4d = {{p.x}, {p.y}, {p.z}, {1.0}};
+  Algebrick::Matrix new_point = m * point_4d;
+  p = {new_point.get(0, 0), new_point.get(1, 0), new_point.get(2, 0)};
+}

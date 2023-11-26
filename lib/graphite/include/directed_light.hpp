@@ -22,6 +22,7 @@ public:
                           const PointColor &inter,
                           const Algebrick::Ray &eye_ray) const override;
   void set_decay(double a, double b, double c);
+  void transform(const Algebrick::Matrix &m) override;
 };
 
 } // namespace Graphite::Light

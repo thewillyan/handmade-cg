@@ -15,8 +15,7 @@ Intensity Spot::get_intensity(const Object &inter_obj,
   Algebrick::Vec3d L = (p - inter.first);
   Algebrick::Vec3d l = L.norm();
 
-  double angle = acos(l * direction * -1);
-  if (angle > aperture / 2) {
+  if (double angle = acos(l * direction * -1); angle > aperture / 2) {
     return {0, 0, 0};
   }
 
@@ -54,4 +53,15 @@ Intensity Spot::get_intensity(const Object &inter_obj,
   }
 
   return (i_dif + i_esp);
+}
+
+void Spot::transform(const Algebrick::Matrix &m) {
+  Algebrick::Matrix point_4d = {{p.x}, {p.y}, {p.z}, {1.0}};
+  Algebrick::Matrix new_point = m * point_4d;
+  p = {new_point.get(0, 0), new_point.get(1, 0), new_point.get(2, 0)};
+  Algebrick::Matrix dir_4d = {
+      {direction.x}, {direction.y}, {direction.z}, {0.0}};
+  Algebrick::Matrix new_dir = m * dir_4d;
+  direction = {new_dir.get(0, 0), new_dir.get(1, 0), new_dir.get(2, 0)};
+  direction = direction.norm();
 }

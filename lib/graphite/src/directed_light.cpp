@@ -63,3 +63,12 @@ Intensity Directed::get_intensity(const Object &inter_obj,
   //     (decay.x * std::pow(L.length(), 2)) + (decay.y * L.length()) + decay.z;
   return (i_dif + i_esp) / 1;
 }
+
+void Directed::transform(const Algebrick::Matrix &m) {
+  //TODO: remove the point from the directed light
+  Algebrick::Matrix direction_4d = {
+      {direction.x}, {direction.y}, {direction.z}, {1.0}};
+  Algebrick::Matrix new_direction = m * direction_4d;
+  direction = {new_direction.get(0, 0), new_direction.get(1, 0),
+               new_direction.get(2, 0)};
+}
