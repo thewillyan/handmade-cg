@@ -2,6 +2,7 @@
 #include "../../algebrick/include/point3d.hpp"
 #include "../../algebrick/include/ray.hpp"
 #include "algebrick/include/matrix.hpp"
+#include "algebrick/include/vec3d.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
@@ -11,11 +12,17 @@
 using namespace Graphite;
 
 // constructors
-FrameRef::FrameRef() : x{1, 0, 0}, y{0, 1, 0}, z{0, 0, -1}, o{0, 0, 0} {}
+FrameRef::FrameRef() : x{1, 0, 0}, y{0, 1, 0}, z{0, 0, 1}, o{0, 0, 0} {}
 FrameRef::FrameRef(const Algebrick::Point3d &p, const Algebrick::Point3d &up,
                    const Algebrick::Point3d &look_at)
-    : y{(up - p).norm()}, z{(look_at - p).norm()}, o{p} {
-  x = y.cross(z);
+    : z{(p - look_at).norm()}, o{p} {
+  Algebrick::Vec3d view_up = up - p;
+  x = view_up.cross(z);
+  if (x.length() == 0) {
+    throw std::invalid_argument("Invalid up vector.");
+  }
+  x = x.norm();
+  y = z.cross(x).norm();
 };
 
 // getters
@@ -26,13 +33,12 @@ const Algebrick::Point3d &FrameRef::origin() const { return o; }
 
 // special methods
 Algebrick::Matrix FrameRef::perspective_matrix() const {
-  Algebrick::Matrix transf = {{x.x, x.y, x.z, 0},
-                              {y.x, y.y, y.z, 0},
-                              {z.x, z.y, -z.z, 0},
-                              {0, 0, 0, 1}};
-  Algebrick::Matrix transl = {
-      {1, 0, 0, -o.x}, {0, 1, 0, -o.y}, {0, 0, 1, -o.z}, {0, 0, 0, 1}};
-  return transf * transl;
+  auto origin = static_cast<Algebrick::Vec3d>(o);
+  Algebrick::Matrix m = {{x.x, x.y, x.z, -(x * origin)},
+                         {y.x, y.y, y.z, -(y * origin)},
+                         {z.x, z.y, z.z, -(z * origin)},
+                         {0, 0, 0, 1}};
+  return m;
 }
 
 Scene::Scene(Space *s)
