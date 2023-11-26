@@ -77,7 +77,7 @@ void Scene::render(Canvas &c, double d) const {
     for (size_t j = 0; j < c.get_height(); ++j) {
       const double y = half_h - half_dy - static_cast<double>(j) * dy;
       // center point of an canvas "block"
-      Algebrick::Ray *ray;
+      Algebrick::Ray const *ray;
       Algebrick::Point3d p{x, y, -d};
 
       switch (mode) {
@@ -86,7 +86,7 @@ void Scene::render(Canvas &c, double d) const {
         break;
       }
       case RenderMode::ORTHOGRAPHIC: {
-        ray = new Algebrick::Ray{p, eye_pov.z_axis()};
+        ray = new Algebrick::Ray{p, -eye_pov.z_axis()};
         break;
       }
       case RenderMode::OBLIQUE:
