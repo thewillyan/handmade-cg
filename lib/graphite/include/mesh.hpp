@@ -9,58 +9,73 @@ namespace Graphite::Mesh {
 class Vertex {
 private:
   Algebrick::Point3d point;
-  class Edge *edge;
+  class HalfEdge *edge;
 
 public:
   Vertex(Algebrick::Point3d point);
-  Vertex(Algebrick::Point3d point, Edge *edge);
+  Vertex(Algebrick::Point3d point, HalfEdge *edge);
 
   Algebrick::Point3d &get_point();
-  Edge *get_edge();
+  const Algebrick::Point3d &get_point() const;
+  HalfEdge *get_edge();
 
-  void set_edge(Edge *e);
+  void set_edge(HalfEdge *e);
 };
 
-class Edge {
+class HalfEdge {
 private:
   Vertex *origin;
   class Face *face;
-  Edge *next;
-  Edge *twin;
+  HalfEdge *next;
+  HalfEdge *twin;
 
 public:
   // Creates an edge with the given origin.
-  Edge(Vertex &o);
+  HalfEdge(Vertex &o);
 
   // Creates an edge e1: v1 -> v2 and an edge e2: v2 -> v1 where e1 and
-  // e2 are twins.
-  static std::pair<Edge *, Edge *> edge_pair(Vertex &v1, Vertex &v2);
+  // e2 are twins. Returns [e1, e2].
+  static std::pair<HalfEdge *, HalfEdge *> edge_pair(Vertex &v1, Vertex &v2);
 
   Vertex *destination();
-  Edge *leaving_edge();
+  HalfEdge *leaving_edge();
+
+  // gets edge face.
+  Face *get_face();
+  // gets next edge.
+  HalfEdge *get_next();
+  // gets edge twin.
+  HalfEdge *get_twin();
 
   // sets edge face.
   void set_face(Face *f);
   // sets next edge.
-  void set_next(Edge *n);
+  void set_next(HalfEdge *n);
   // sets edge twin.
-  void set_twin(Edge *t);
+  void set_twin(HalfEdge *t);
 };
 
 class Face {
 private:
-  Edge *head;
+  HalfEdge *head;
 
 public:
   // creates an "null" face.
   Face();
   // creates an face with the given edge as its head.
-  Face(Edge &e);
+  Face(HalfEdge &e);
 };
 
 class PolygonMesh {
 private:
+  // list of vertices in the mesh.
   std::vector<Vertex *> vertices;
+  // list of faces, note the face half-edges order alternate between
+  // counterclockwise and clockwise. In other words the first face edges are in
+  // counterclockwise order, the second are in clockwise, the third in
+  // counterclockwise and so on.
+  //
+  // This is necessary to keep data struture logic.
   std::vector<Face *> faces;
 
 public:
