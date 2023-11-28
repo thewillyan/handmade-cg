@@ -1,14 +1,13 @@
 #include "graphite/include/triangular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include <iostream>
 #include <stdexcept>
 #include <utility>
 
 using namespace Graphite;
 
-TriangularPlane::TriangularPlane(Algebrick::Vec3d p0, Algebrick::Vec3d p1,
-                                 Algebrick::Vec3d p2)
+TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
+                                 Algebrick::Point3d p2)
     : p0{p0}, p1{p1}, p2{p2}, shiness{1}, env{1, 1, 1}, espec{1, 1, 1}, diff{
                                                                             1,
                                                                             1,
@@ -18,8 +17,8 @@ TriangularPlane::TriangularPlane(Algebrick::Vec3d p0, Algebrick::Vec3d p1,
   norm = r1.cross(r2).norm();
 }
 
-TriangularPlane::TriangularPlane(Algebrick::Vec3d p0, Algebrick::Vec3d p1,
-                                 Algebrick::Vec3d p2, double shiness,
+TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
+                                 Algebrick::Point3d p2, double shiness,
                                  Light::Intensity env, Light::Intensity espec,
                                  Light::Intensity diff)
     : p0{p0}, p1{p1}, p2{p2}, shiness{shiness}, env{env}, espec{espec},
@@ -95,4 +94,19 @@ void TriangularPlane::scale(double k) {
     Algebrick::Vec3d offset = distc.norm() * k;
     *p_ptr += offset;
   }
+}
+void TriangularPlane::transform(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix new_p0 = matrix * Algebrick::Matrix{{p0.x, p0.y, p0.z, 1}};
+  Algebrick::Matrix new_p1 = matrix * Algebrick::Matrix{{p1.x, p1.y, p1.z, 1}};
+  Algebrick::Matrix new_p2 = matrix * Algebrick::Matrix{{p2.x, p2.y, p2.z, 1}};
+
+  p0 = {new_p0.get(0, 0), new_p0.get(1, 0), new_p0.get(2, 0)};
+  p1 = {new_p1.get(0, 0), new_p1.get(1, 0), new_p1.get(2, 0)};
+  p2 = {new_p2.get(0, 0), new_p2.get(1, 0), new_p2.get(2, 0)};
+
+  Algebrick::Matrix new_norm =
+      matrix * Algebrick::Matrix{{norm.x, norm.y, norm.z}};
+  norm = Algebrick::Vec3d{new_norm.get(0, 0), new_norm.get(1, 0),
+                          new_norm.get(2, 0)}
+             .norm();
 }

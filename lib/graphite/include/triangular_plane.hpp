@@ -20,9 +20,9 @@ private:
   Light::Intensity diff;
 
 public:
-  TriangularPlane(Algebrick::Vec3d p0, Algebrick::Vec3d p1,
-                  Algebrick::Vec3d p2);
-  TriangularPlane(Algebrick::Vec3d, Algebrick::Vec3d, Algebrick::Vec3d,
+  TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
+                  Algebrick::Point3d p2);
+  TriangularPlane(Algebrick::Point3d, Algebrick::Point3d, Algebrick::Point3d,
                   double shiness, Light::Intensity env, Light::Intensity espec,
                   Light::Intensity diff);
 
@@ -34,14 +34,14 @@ public:
   // transformations
   void translate(const Algebrick::Vec3d &offset);
   void scale(double k);
+  void transform(const Algebrick::Matrix &matrix);
 
   // getters
-  virtual double get_reflection() const;
-  virtual Light::Intensity get_dif_int() const;
-  virtual Light::Intensity get_espec_int() const;
-  virtual Light::Intensity get_env_int() const;
+  double get_reflection() const;
+  Light::Intensity get_dif_int() const;
+  Light::Intensity get_espec_int() const;
+  Light::Intensity get_env_int() const;
 };
 
 } // namespace Graphite
-
 #endif // !Graphite_TriangularPlane
