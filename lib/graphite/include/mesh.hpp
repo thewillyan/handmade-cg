@@ -70,12 +70,7 @@ class PolygonMesh {
 private:
   // list of vertices in the mesh.
   std::vector<Vertex *> vertices;
-  // list of faces, note the face half-edges order alternate between
-  // counterclockwise and clockwise. In other words the first face edges are in
-  // counterclockwise order, the second are in clockwise, the third in
-  // counterclockwise and so on.
-  //
-  // This is necessary to keep data struture logic.
+  // list of faces.
   std::vector<Face *> faces;
 
 public:
@@ -84,6 +79,9 @@ public:
   // A face can constructed by a arbitrary number of points, but
   // as the only repersentation that we have is the `TriangularPlane`
   // only three can be used without preprocess the faces vector.
+  //
+  // The points should be passed only in counterclockwise or clockwise, but
+  // never both in the same populated datastructure.
   void add_face(Algebrick::Point3d points[3]);
 
   // TODO:
