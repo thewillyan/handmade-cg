@@ -1,5 +1,5 @@
-#ifndef Graphite_PolygonMesh
-#define Graphite_PolygonMesh
+#ifndef Graphite_TriMesh
+#define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
 #include <vector>
@@ -66,19 +66,20 @@ public:
   Face(HalfEdge &e);
 };
 
-class PolygonMesh {
+class TriMesh {
 private:
   // list of vertices in the mesh.
   std::vector<Vertex *> vertices;
-  // list of faces.
+  // In this datastructure a face can be constructed by a arbitrary number of
+  // points, however the only repersentation that we have is the
+  // `TriangularPlane` so only three points faces can be used without
+  // pre-process the faces vector.
   std::vector<Face *> faces;
 
 public:
-  PolygonMesh();
+  TriMesh();
 
-  // A face can constructed by a arbitrary number of points, but
-  // as the only repersentation that we have is the `TriangularPlane`
-  // only three can be used without preprocess the faces vector.
+  // Creates a new triangular face with the given points.
   //
   // The points should be passed only in counterclockwise or clockwise, but
   // never both in the same populated datastructure.
@@ -86,10 +87,6 @@ public:
 
   // TODO:
   //  - transform into multiple TriangularPlane's?
-  //  - if is necessary to locate a specific `*Vertex` by a `Point3d`
-  //    replace `std::vector` by a `std::set` in `vercices`. It's rbtree
-  //    implementation should turn this more fast and erghonomic. (rembember
-  //    to implement an O(1) hash using bit shift)
 };
 } // namespace Graphite::Mesh
-#endif // !Graphite_PolygonMesh
+#endif // !Graphite_TriMesh

@@ -1,4 +1,4 @@
-#include "graphite/include/mesh.hpp"
+#include "graphite/include/tri_mesh.hpp"
 #include "algebrick/include/point3d.hpp"
 #include <utility>
 
@@ -45,9 +45,9 @@ void HalfEdge::set_twin(HalfEdge *t) { twin = t; }
 Face::Face() : head{nullptr} {}
 Face::Face(HalfEdge &e) : head{&e} {}
 
-PolygonMesh::PolygonMesh() {}
+TriMesh::TriMesh() {}
 
-void PolygonMesh::add_face(Algebrick::Point3d points[3]) {
+void TriMesh::add_face(Algebrick::Point3d points[3]) {
   // v0
   // | \
   // |f \
