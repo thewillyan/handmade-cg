@@ -73,36 +73,36 @@ void PolygonMesh::add_face(Algebrick::Point3d points[3]) {
   }
 
   // build edges
-  bool clockwise = (faces.size() % 2) != 0;
   HalfEdge *edges[3];
   for (size_t i = 0; i < 3; ++i) {
-    HalfEdge *e = vers[i]->get_edge();
     // verify if the edge has already be allocated as a twin.
+    //
+    // this happens if, and only if, exists a vertex in the current insertion
+    // such that it's source of an edge which the destination is also part of
+    // the current insertion.
+    HalfEdge *e = vers[i]->get_edge();
+    HalfEdge *twin = nullptr;
     if (e != nullptr) {
-      edges[i] = e->get_twin();
-    } else {
-      // allocate new edge pair
-      auto pair = HalfEdge::edge_pair(*vers[i], *vers[(i + 1) % 3]);
-      if (!clockwise) {
-        edges[i] = pair.first;
-      } else {
-        edges[i] = pair.second;
+      Vertex *v = e->destination();
+      for (size_t j = 0; j < 3; ++j) {
+        if (vers[i] == v) {
+          twin = e->get_twin();
+          break;
+        }
       }
     }
+
+    if (twin != nullptr) {
+      edges[i] = twin;
+    } else {
+      // allocate new edge pair.
+      edges[i] = HalfEdge::edge_pair(*vers[i], *vers[(i + 1) % 3]).first;
+    }
   }
-  if (!clockwise) {
-    // v0 -> v1 -> v2 -> v0
-    //    e0    e1    e2
-    edges[0]->set_next(edges[1]);
-    edges[1]->set_next(edges[2]);
-    edges[2]->set_next(edges[0]);
-  } else {
-    // v0 <- v1 <- v2 <- v0
-    //    e0    e1    e2
-    edges[0]->set_next(edges[2]);
-    edges[1]->set_next(edges[0]);
-    edges[2]->set_next(edges[1]);
-  }
+  // bind next edge to all edges.
+  edges[0]->set_next(edges[1]);
+  edges[1]->set_next(edges[2]);
+  edges[2]->set_next(edges[0]);
 
   // bind vertices to edges
   for (size_t i = 0; i < 3; ++i) {
