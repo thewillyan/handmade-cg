@@ -1,5 +1,6 @@
 #include "graphite/include/tri_mesh.hpp"
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/triangular_plane.hpp"
 #include <utility>
 
 using namespace Graphite::Mesh;
@@ -34,6 +35,7 @@ HalfEdge *HalfEdge::leaving_edge() {
   // must always have a twin (for the keep the datastructure safe)
   return twin->next;
 }
+Vertex *HalfEdge::get_origin() { return origin; }
 Face *HalfEdge::get_face() { return face; }
 HalfEdge *HalfEdge::get_next() { return next; }
 HalfEdge *HalfEdge::get_twin() { return twin; }
@@ -44,6 +46,7 @@ void HalfEdge::set_twin(HalfEdge *t) { twin = t; }
 
 Face::Face() : head{nullptr} {}
 Face::Face(HalfEdge &e) : head{&e} {}
+HalfEdge *Face::get_edge() { return head; }
 
 TriMesh::TriMesh() {}
 
@@ -115,3 +118,23 @@ void TriMesh::add_face(Algebrick::Point3d points[3]) {
   }
   faces.emplace_back(f);
 };
+
+std::vector<Graphite::TriangularPlane>
+TriMesh::face_planes(double shiness, Light::Intensity env,
+                     Light::Intensity espec, Light::Intensity diff) {
+  std::vector<Graphite::TriangularPlane> planes;
+  planes.reserve(faces.size());
+  Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+  size_t curr_point;
+  for (Face *f : faces) {
+    HalfEdge *e = f->get_edge();
+    curr_point = 0;
+    do {
+      pbuff[curr_point++] = e->get_origin()->get_point();
+      e = e->get_next();
+    } while (e->get_next() != f->get_edge());
+    planes.push_back(Graphite::TriangularPlane{pbuff[0], pbuff[1], pbuff[2],
+                                               shiness, env, espec, diff});
+  }
+  return planes;
+}

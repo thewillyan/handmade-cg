@@ -2,6 +2,7 @@
 #define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/triangular_plane.hpp"
 #include <vector>
 
 namespace Graphite::Mesh {
@@ -40,6 +41,8 @@ public:
   Vertex *destination();
   HalfEdge *leaving_edge();
 
+  // gets edge origin vertex.
+  Vertex *get_origin();
   // gets edge face.
   Face *get_face();
   // gets next edge.
@@ -64,6 +67,9 @@ public:
   Face();
   // creates an face with the given edge as its head.
   Face(HalfEdge &e);
+
+  // gets the head edge
+  HalfEdge *get_edge();
 };
 
 class TriMesh {
@@ -84,6 +90,11 @@ public:
   // The points should be passed only in counterclockwise or clockwise, but
   // never both in the same populated datastructure.
   void add_face(Algebrick::Point3d points[3]);
+
+  // Get each face plane as a `TriangularPlane`.
+  std::vector<TriangularPlane> face_planes(double shiness, Light::Intensity env,
+                                           Light::Intensity espec,
+                                           Light::Intensity diff);
 
   // TODO:
   //  - transform into multiple TriangularPlane's?
