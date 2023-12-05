@@ -5,7 +5,7 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <optional>
 #include <utility>
@@ -33,10 +33,7 @@ public:
   // getters
   unsigned long int get_id() const { return id; };
   bool is_visible() const { return visible; };
-  virtual double get_reflection() const = 0;
-  virtual Light::Intensity get_dif_int() const = 0;
-  virtual Light::Intensity get_espec_int() const = 0;
-  virtual Light::Intensity get_env_int() const = 0;
+  virtual ObjectIntensity get_intensity(const Algebrick::Point3d &) const = 0;
 
   // transformations
   virtual void translate(const Algebrick::Vec3d &offset) = 0;

@@ -4,6 +4,7 @@
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
@@ -13,13 +14,11 @@
 using namespace Graphite::Object;
 
 Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor)
-    : center{c}, radius{r}, color{pcolor}, reflect{1}, dif{1, 1, 1},
-      espec{1, 1, 1}, env{1, 1, 1} {}
+    : center{c}, radius{r}, color{pcolor} {}
 
 Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor,
                Light::Intensity d, Light::Intensity esp, Light::Intensity en)
-    : center{c}, radius{r}, color{pcolor}, reflect{1}, dif{d}, espec{esp},
-      env{en} {}
+    : center{c}, radius{r}, color{pcolor}, intensity{1, en, esp, d} {}
 Sphere::~Sphere() {}
 
 std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
@@ -56,11 +55,11 @@ Sphere::normal(const Algebrick::Point3d &p) const {
   return (p - center).norm();
 }
 
-double Sphere::get_reflection() const { return reflect; }
-void Sphere::set_reflection(double k) { reflect = k; }
-Graphite::Light::Intensity Sphere::get_dif_int() const { return dif; }
-Graphite::Light::Intensity Sphere::get_espec_int() const { return espec; }
-Graphite::Light::Intensity Sphere::get_env_int() const { return env; }
+ObjectIntensity
+Sphere::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+}
+void Sphere::set_reflection(double k) { intensity.set_shineness(k); }
 
 void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
 void Sphere::scale(double k) { radius *= k; }

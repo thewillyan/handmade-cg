@@ -9,18 +9,18 @@ using namespace Graphite::Object;
 Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
                    double shineness)
-    : shineness{shineness}, radius{radius}, height{height}, dir{dir.norm()},
-      base_center{base_center}, base{base_center, radius, dir.norm() * -1},
-      top{base_center + dir.norm() * height, radius, dir.norm()}, dif{1, 1, 1},
-      spec{1, 1, 1}, env{1, 1, 1} {}
+    : radius{radius}, height{height}, dir{dir.norm()}, base_center{base_center},
+      base{base_center, radius, dir.norm() * -1},
+      top{base_center + dir.norm() * height, radius, dir.norm()} {
+  intensity.set_shineness(shineness);
+};
 
 Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
                    double shineness, const Light::Intensity &dif,
                    const Light::Intensity &spec, const Light::Intensity &env)
-    : shineness{shineness}, radius{radius}, height{height}, dir{dir.norm()},
-      base_center{base_center}, base{base_center, radius, dir.norm() * -1, dif,
-                                     spec,        env,    shineness},
+    : radius{radius}, height{height}, dir{dir.norm()}, base_center{base_center},
+      base{base_center, radius, dir.norm() * -1, dif, spec, env, shineness},
       top{base_center + dir.norm() * height,
           radius,
           dir.norm(),
@@ -28,7 +28,7 @@ Cilinder::Cilinder(const Algebrick::Point3d &base_center,
           spec,
           env,
           shineness},
-      dif{dif}, spec{spec}, env{env} {}
+      intensity{shineness, dif, spec, env} {};
 
 std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d v =
@@ -114,10 +114,10 @@ Cilinder::normal(const Algebrick::Point3d &p) const {
 }
 
 // Getters
-double Cilinder::get_reflection() const { return shineness; }
-Graphite::Light::Intensity Cilinder::get_dif_int() const { return dif; }
-Graphite::Light::Intensity Cilinder::get_espec_int() const { return spec; }
-Graphite::Light::Intensity Cilinder::get_env_int() const { return env; }
+Graphite::Object::ObjectIntensity
+Cilinder::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+}
 
 void Cilinder::translate(const Algebrick::Vec3d &offset) {
   base_center += offset;

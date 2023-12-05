@@ -6,14 +6,12 @@
 using namespace Graphite::Object;
 
 CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n)
-    : center{c}, radius{r}, norm{n}, env{1, 1, 1}, dif{1, 1, 1}, espec{1, 1, 1},
-      shiness{1} {}
+    : center{c}, radius{r}, norm{n} {}
 
 CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n,
                              Light::Intensity e, Light::Intensity d,
                              Light::Intensity es, double s)
-
-    : center{c}, radius{r}, norm{n}, env{e}, dif{d}, espec{es}, shiness{s} {}
+    : center{c}, radius{r}, norm{n}, intensity{s, e, d, es} {}
 
 std::optional<PointColor>
 CircularPlane::intersect(const Algebrick::Ray &ray) const {
@@ -41,12 +39,10 @@ CircularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 }
 
 // getters
-double CircularPlane::get_reflection() const { return shiness; }
-Graphite::Light::Intensity CircularPlane::get_dif_int() const { return dif; }
-Graphite::Light::Intensity CircularPlane::get_espec_int() const {
-  return espec;
-}
-Graphite::Light::Intensity CircularPlane::get_env_int() const { return env; }
+ObjectIntensity CircularPlane::get_intensity(
+    [[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+};
 
 void CircularPlane::translate(const Algebrick::Vec3d &offset) {
   center += offset;
