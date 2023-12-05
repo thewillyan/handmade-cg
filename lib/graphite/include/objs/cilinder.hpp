@@ -12,7 +12,6 @@ namespace Graphite::Object {
 
 class Cilinder : public Object {
 private:
-  double shineness;
   double radius;
   double height;
   Algebrick::Vec3d dir;
@@ -20,10 +19,7 @@ private:
   // TODO: Remove this and define the cylinder mathematically
   CircularPlane base;
   CircularPlane top;
-
-  Light::Intensity dif;
-  Light::Intensity spec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   Cilinder(const Algebrick::Point3d &, const Algebrick::Vec3d &, double, double,
@@ -35,10 +31,7 @@ public:
   std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;
-  double get_reflection() const override;
-  Light::Intensity get_dif_int() const override;
-  Light::Intensity get_espec_int() const override;
-  Light::Intensity get_env_int() const override;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;

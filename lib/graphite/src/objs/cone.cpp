@@ -3,6 +3,7 @@
 #include "algebrick/include/vec3d.hpp"
 #include "cmath"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include <algorithm>
 #include <cmath>
 #include <utility>
@@ -13,15 +14,14 @@ Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n)
     : radius{r}, height{h}, aperture{std::acos(h / std::sqrt(r * r + h * h))},
       norm{n.norm()}, center{base_center}, top{base_center + n.norm() * h},
-      base{base_center, r, n.norm()}, shiness{1}, env{1, 1, 1}, espec{1, 1, 1},
-      dif{1, 1, 1} {}
+      base{base_center, r, n.norm()} {}
 
 Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n, double shiness, Light::Intensity env,
            Light::Intensity esp, Light::Intensity dif)
     : radius{r}, height{h}, aperture{0.2}, norm{n.norm()}, center{base_center},
       top{base_center + n.norm() * h}, base{base_center, r, n.norm()},
-      shiness{shiness}, env{env}, espec{esp}, dif{dif} {}
+      intensity{shiness, env, esp, dif} {}
 
 std::optional<PointColor> Cone::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d w = ray.source() - center;
@@ -121,7 +121,7 @@ void Cone::scale(double k) {
 }
 
 // getters
-double Cone::get_reflection() const { return shiness; };
-Graphite::Light::Intensity Cone::get_dif_int() const { return dif; };
-Graphite::Light::Intensity Cone::get_espec_int() const { return espec; }
-Graphite::Light::Intensity Cone::get_env_int() const { return env; }
+ObjectIntensity
+Cone::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+}

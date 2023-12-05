@@ -2,6 +2,7 @@
 #define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/triangular_plane.hpp"
 #include <vector>
@@ -82,11 +83,7 @@ private:
   // `TriangularPlane` so only three points faces can be used without
   // pre-process the faces vector.
   std::vector<Face *> faces;
-
-  double shiness;
-  Light::Intensity dif;
-  Light::Intensity spec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   TriMesh();
@@ -108,10 +105,7 @@ public:
   std::optional<Algebrick::Vec3d> normal(const Algebrick::Point3d &p) const;
 
   // getters
-  double get_reflection() const;
-  Light::Intensity get_dif_int() const;
-  Light::Intensity get_espec_int() const;
-  Light::Intensity get_env_int() const;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &) const override;
 
   // transformations
   void translate(const Algebrick::Vec3d &offset);

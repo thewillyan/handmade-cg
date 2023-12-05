@@ -5,6 +5,7 @@
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/objs/circular_plane.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 
 namespace Graphite::Object {
@@ -18,11 +19,7 @@ private:
   Algebrick::Point3d center;
   Algebrick::Point3d top;
   CircularPlane base;
-
-  double shiness;
-  Light::Intensity env;
-  Light::Intensity espec;
-  Light::Intensity dif;
+  ObjectIntensity intensity;
 
 public:
   Cone(double h, double radius, Algebrick::Point3d base_center,
@@ -39,10 +36,7 @@ public:
   void scale(double k) override;
 
   // getters
-  double get_reflection() const override;
-  Light::Intensity get_dif_int() const override;
-  Light::Intensity get_espec_int() const override;
-  Light::Intensity get_env_int() const override;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 };
 } // namespace Graphite::Object
 

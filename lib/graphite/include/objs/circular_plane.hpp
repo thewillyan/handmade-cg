@@ -13,10 +13,7 @@ private:
   Algebrick::Point3d center;
   double radius;
   Algebrick::Vec3d norm;
-  Light::Intensity env;
-  Light::Intensity dif;
-  Light::Intensity espec;
-  double shiness;
+  ObjectIntensity intensity;
 
 public:
   CircularPlane(Algebrick::Point3d, double, Algebrick::Vec3d);
@@ -33,10 +30,7 @@ public:
   void transform(const Algebrick::Matrix &matrix) override;
 
   // getters
-  virtual double get_reflection() const;
-  virtual Light::Intensity get_dif_int() const;
-  virtual Light::Intensity get_espec_int() const;
-  virtual Light::Intensity get_env_int() const;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 };
 
 } // namespace Graphite::Object

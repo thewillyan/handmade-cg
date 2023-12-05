@@ -4,6 +4,7 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 
 namespace Graphite::Object {
@@ -14,10 +15,7 @@ private:
   Algebrick::Point3d p1;
   Algebrick::Point3d p2;
   Algebrick::Vec3d norm;
-  double shiness;
-  Light::Intensity env;
-  Light::Intensity espec;
-  Light::Intensity diff;
+  ObjectIntensity intensity;
 
 public:
   TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
@@ -37,10 +35,7 @@ public:
   void transform(const Algebrick::Matrix &matrix);
 
   // getters
-  double get_reflection() const;
-  Light::Intensity get_dif_int() const;
-  Light::Intensity get_espec_int() const;
-  Light::Intensity get_env_int() const;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &) const override;
 };
 
 } // namespace Graphite::Object
