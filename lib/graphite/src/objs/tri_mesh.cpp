@@ -1,12 +1,12 @@
-#include "graphite/include/tri_mesh.hpp"
+#include "graphite/include/objs/tri_mesh.hpp"
 #include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
-#include "graphite/include/object.hpp"
-#include "graphite/include/triangular_plane.hpp"
+#include "graphite/include/objs/object.hpp"
+#include "graphite/include/objs/triangular_plane.hpp"
 #include <cmath>
 #include <utility>
 
-using namespace Graphite::Mesh;
+using namespace Graphite::Object;
 
 Vertex::Vertex(Algebrick::Point3d p) : point{p}, edge{nullptr} {}
 Vertex::Vertex(Algebrick::Point3d p, HalfEdge *e) : point{p}, edge{e} {}
@@ -125,10 +125,11 @@ void TriMesh::add_face(Algebrick::Point3d points[3]) {
   faces.emplace_back(f);
 };
 
-std::vector<Graphite::TriangularPlane>
-TriMesh::face_planes(double shiness, Light::Intensity env,
-                     Light::Intensity espec, Light::Intensity diff) {
-  std::vector<Graphite::TriangularPlane> planes;
+std::vector<TriangularPlane> TriMesh::face_planes(double shiness,
+                                                  Light::Intensity env,
+                                                  Light::Intensity espec,
+                                                  Light::Intensity diff) {
+  std::vector<TriangularPlane> planes;
   planes.reserve(faces.size());
   Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   size_t curr_point;
@@ -139,16 +140,15 @@ TriMesh::face_planes(double shiness, Light::Intensity env,
       pbuff[curr_point++] = e->get_origin()->get_point();
       e = e->get_next();
     } while (e->get_next() != f->get_edge());
-    planes.push_back(Graphite::TriangularPlane{pbuff[0], pbuff[1], pbuff[2],
-                                               shiness, env, espec, diff});
+    planes.push_back(TriangularPlane{pbuff[0], pbuff[1], pbuff[2], shiness, env,
+                                     espec, diff});
   }
   return planes;
 }
 
-std::optional<Graphite::PointColor>
-TriMesh::intersect(const Algebrick::Ray &ray) const {
+std::optional<PointColor> TriMesh::intersect(const Algebrick::Ray &ray) const {
   double min_t = INFINITY;
-  std::optional<Graphite::PointColor> min_p;
+  std::optional<PointColor> min_p;
   Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   size_t curr_point;
   for (Face *f : faces) {
@@ -158,8 +158,8 @@ TriMesh::intersect(const Algebrick::Ray &ray) const {
       pbuff[curr_point++] = e->get_origin()->get_point();
       e = e->get_next();
     } while (e->get_next() != f->get_edge());
-    auto t = Graphite::TriangularPlane{pbuff[0], pbuff[1], pbuff[2], shiness,
-                                       env,      spec,     dif};
+    auto t =
+        TriangularPlane{pbuff[0], pbuff[1], pbuff[2], shiness, env, spec, dif};
     auto intersect = t.intersect(ray);
     if (intersect.has_value()) {
       double curr_t = (intersect->first - ray.source()).length();

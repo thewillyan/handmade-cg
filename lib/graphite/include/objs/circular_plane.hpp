@@ -4,9 +4,9 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
-#include "graphite/include/object.hpp"
+#include "graphite/include/objs/object.hpp"
 
-namespace Graphite {
+namespace Graphite::Object {
 
 class CircularPlane : public Object {
 private:
@@ -39,6 +39,6 @@ public:
   virtual Light::Intensity get_env_int() const;
 };
 
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // !Graphite_CircularPlane

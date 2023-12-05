@@ -7,7 +7,7 @@
 #include "object.hpp"
 #include <optional>
 
-namespace Graphite {
+namespace Graphite::Object {
 
 class Plane : public Object {
 private:
@@ -41,6 +41,6 @@ public:
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // Graphite_Plane

@@ -1,13 +1,13 @@
 #ifndef Graphite_Sphere_Obj
 #define Graphite_Sphere_Obj
 
-#include "../../algebrick/include/point3d.hpp"
 #include "algebrick/include/matrix.hpp"
+#include "algebrick/include/point3d.hpp"
 #include "graphite/include/intensity.hpp"
 #include "object.hpp"
 #include <SDL2/SDL_pixels.h>
 
-namespace Graphite {
+namespace Graphite::Object {
 class Sphere : public Object {
 private:
   Algebrick::Point3d center;
@@ -41,6 +41,6 @@ public:
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // !Graphite_Sphere_Obj

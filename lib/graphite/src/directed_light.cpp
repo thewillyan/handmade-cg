@@ -1,7 +1,7 @@
 #include "graphite/include/directed_light.hpp"
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include "graphite/include/object.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <cmath>
 
 using namespace Graphite::Light;
@@ -11,9 +11,9 @@ Directed::Directed(Intensity light_int, Algebrick::Vec3d direction)
 
 void Directed::set_decay(double a, double b, double c) { decay = {a, b, c}; }
 
-Intensity Directed::get_intensity(const Object &inter_obj,
-                                  std::vector<Object *> objs,
-                                  const PointColor &inter,
+Intensity Directed::get_intensity(const Object::Object &inter_obj,
+                                  std::vector<Object::Object *> objs,
+                                  const Object::PointColor &inter,
                                   const Algebrick::Ray &eye_ray) const {
 
   // check if same direction

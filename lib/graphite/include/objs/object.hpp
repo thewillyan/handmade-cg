@@ -10,7 +10,7 @@
 #include <optional>
 #include <utility>
 
-namespace Graphite {
+namespace Graphite::Object {
 
 using PointColor = std::pair<Algebrick::Point3d, SDL_Color>;
 
@@ -48,6 +48,6 @@ public:
   void set_visible(bool v) { visible = v; };
 };
 
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // !Graphite_Object_H

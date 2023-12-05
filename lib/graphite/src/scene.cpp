@@ -6,7 +6,6 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
-#include <iostream>
 #include <optional>
 
 using namespace Graphite;
@@ -93,7 +92,7 @@ void Scene::render(Canvas &c, double d) const {
         ray = new Algebrick::Ray{p, oblique_dir};
         break;
       }
-      std::optional<PointColor> point_color = space->intersect(*ray);
+      std::optional<Object::PointColor> point_color = space->intersect(*ray);
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
       std::optional<SDL_Color> color =
