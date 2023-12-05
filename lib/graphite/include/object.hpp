@@ -23,6 +23,7 @@ private:
 
 public:
   Object() : visible{true}, id{id_counter++} {};
+  // TODO: replace return value by a tuple of the format (double, *Object).
   virtual std::optional<PointColor>
   intersect(const Algebrick::Ray &ray) const = 0;
   virtual std::optional<Algebrick::Vec3d>
