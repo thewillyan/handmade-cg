@@ -1,10 +1,9 @@
-#include "../include/light_point.hpp"
-#include "../../algebrick/include/point3d.hpp"
-#include "../include/object.hpp"
+#include "graphite/include/light_point.hpp"
+#include "algebrick/include/point3d.hpp"
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <cmath>
-#include <stdexcept>
 
 using namespace Graphite::Light;
 
@@ -15,9 +14,9 @@ Point::Point(Algebrick::Point3d point, Intensity light_int)
 // setters
 void Point::set_decay(double a, double b, double c) { decay = {a, b, c}; }
 
-Intensity Point::get_intensity(const Object &inter_obj,
-                               std::vector<Object *> objs,
-                               const PointColor &inter,
+Intensity Point::get_intensity(const Object::Object &inter_obj,
+                               std::vector<Object::Object *> objs,
+                               const Object::PointColor &inter,
                                const Algebrick::Ray &eye_ray) const {
 
   Algebrick::Vec3d L = (p - inter.first);

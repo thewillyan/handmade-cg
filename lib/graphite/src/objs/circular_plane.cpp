@@ -1,9 +1,9 @@
-#include "graphite/include/circular_plane.hpp"
+#include "graphite/include/objs/circular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n)
     : center{c}, radius{r}, norm{n}, env{1, 1, 1}, dif{1, 1, 1}, espec{1, 1, 1},
@@ -42,9 +42,11 @@ CircularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 
 // getters
 double CircularPlane::get_reflection() const { return shiness; }
-Light::Intensity CircularPlane::get_dif_int() const { return dif; }
-Light::Intensity CircularPlane::get_espec_int() const { return espec; }
-Light::Intensity CircularPlane::get_env_int() const { return env; }
+Graphite::Light::Intensity CircularPlane::get_dif_int() const { return dif; }
+Graphite::Light::Intensity CircularPlane::get_espec_int() const {
+  return espec;
+}
+Graphite::Light::Intensity CircularPlane::get_env_int() const { return env; }
 
 void CircularPlane::translate(const Algebrick::Vec3d &offset) {
   center += offset;

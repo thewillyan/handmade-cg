@@ -2,11 +2,11 @@
 #define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
-#include "graphite/include/object.hpp"
-#include "graphite/include/triangular_plane.hpp"
+#include "graphite/include/objs/object.hpp"
+#include "graphite/include/objs/triangular_plane.hpp"
 #include <vector>
 
-namespace Graphite::Mesh {
+namespace Graphite::Object {
 
 class Vertex {
 private:
@@ -118,5 +118,5 @@ public:
   void scale(double k);
   void transform(const Algebrick::Matrix &matrix);
 };
-} // namespace Graphite::Mesh
+} // namespace Graphite::Object
 #endif // !Graphite_TriMesh

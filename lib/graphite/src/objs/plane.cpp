@@ -1,10 +1,9 @@
-#include "graphite/include/plane.hpp"
+#include "graphite/include/objs/plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include <SDL2/SDL_pixels.h>
-#include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s)
     : point{p}, norm{n}, color{c}, shine{s}, dif{1, 1, 1}, espec{1, 1, 1},
@@ -36,9 +35,9 @@ Plane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 
 double Plane::get_reflection() const { return shine; }
 void Plane::set_reflection(double k) { shine = k; }
-Light::Intensity Plane::get_dif_int() const { return dif; }
-Light::Intensity Plane::get_espec_int() const { return espec; }
-Light::Intensity Plane::get_env_int() const { return env; }
+Graphite::Light::Intensity Plane::get_dif_int() const { return dif; }
+Graphite::Light::Intensity Plane::get_espec_int() const { return espec; }
+Graphite::Light::Intensity Plane::get_env_int() const { return env; }
 
 void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }
 void Plane::scale([[maybe_unused]] double k) {

@@ -1,4 +1,4 @@
-#include "graphite/include/cone.hpp"
+#include "graphite/include/objs/cone.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "cmath"
@@ -6,9 +6,8 @@
 #include <algorithm>
 #include <cmath>
 #include <utility>
-#include <vector>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n)
@@ -123,6 +122,6 @@ void Cone::scale(double k) {
 
 // getters
 double Cone::get_reflection() const { return shiness; };
-Light::Intensity Cone::get_dif_int() const { return dif; };
-Light::Intensity Cone::get_espec_int() const { return espec; }
-Light::Intensity Cone::get_env_int() const { return env; }
+Graphite::Light::Intensity Cone::get_dif_int() const { return dif; };
+Graphite::Light::Intensity Cone::get_espec_int() const { return espec; }
+Graphite::Light::Intensity Cone::get_env_int() const { return env; }

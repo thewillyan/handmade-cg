@@ -1,10 +1,10 @@
-#include "graphite/include/triangular_plane.hpp"
+#include "graphite/include/objs/triangular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include <stdexcept>
 #include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
                                  Algebrick::Point3d p2)
@@ -68,9 +68,11 @@ TriangularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 
 // getters
 double TriangularPlane::get_reflection() const { return shiness; }
-Light::Intensity TriangularPlane::get_dif_int() const { return diff; }
-Light::Intensity TriangularPlane::get_espec_int() const { return espec; }
-Light::Intensity TriangularPlane::get_env_int() const { return env; }
+Graphite::Light::Intensity TriangularPlane::get_dif_int() const { return diff; }
+Graphite::Light::Intensity TriangularPlane::get_espec_int() const {
+  return espec;
+}
+Graphite::Light::Intensity TriangularPlane::get_env_int() const { return env; }
 
 void TriangularPlane::translate(const Algebrick::Vec3d &offset) {
   p0 += offset;

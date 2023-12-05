@@ -1,10 +1,10 @@
-#include "graphite/include/cilinder.hpp"
+#include "graphite/include/objs/cilinder.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include <cmath>
 #include <vector>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
@@ -115,9 +115,9 @@ Cilinder::normal(const Algebrick::Point3d &p) const {
 
 // Getters
 double Cilinder::get_reflection() const { return shineness; }
-Light::Intensity Cilinder::get_dif_int() const { return dif; }
-Light::Intensity Cilinder::get_espec_int() const { return spec; }
-Light::Intensity Cilinder::get_env_int() const { return env; }
+Graphite::Light::Intensity Cilinder::get_dif_int() const { return dif; }
+Graphite::Light::Intensity Cilinder::get_espec_int() const { return spec; }
+Graphite::Light::Intensity Cilinder::get_env_int() const { return env; }
 
 void Cilinder::translate(const Algebrick::Vec3d &offset) {
   base_center += offset;

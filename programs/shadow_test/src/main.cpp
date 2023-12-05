@@ -1,14 +1,14 @@
-#include "../../../lib/algebrick/include/point3d.hpp"
-#include "../../../lib/graphite/include/canvas.hpp"
-#include "../../../lib/graphite/include/light_point.hpp"
-#include "../../../lib/graphite/include/scene.hpp"
-#include "../../../lib/graphite/include/space.hpp"
-#include "../../../lib/graphite/include/sphere.hpp"
+#include "algebrick/include/point3d.hpp"
+#include "graphite/include/canvas.hpp"
+#include "graphite/include/light_point.hpp"
+#include "graphite/include/objs/sphere.hpp"
+#include "graphite/include/scene.hpp"
+#include "graphite/include/space.hpp"
 #include <cstddef>
 
 const size_t WIN_WIDTH = 500;
 const size_t WIN_HEIGHT = 500;
-unsigned long int Graphite::Object::id_counter = 0;
+unsigned long int Graphite::Object::Object::id_counter = 0;
 
 int main() {
   auto canvas = Graphite::Canvas(WIN_WIDTH, WIN_HEIGHT);
@@ -18,7 +18,7 @@ int main() {
   double radius = 900;
   Algebrick::Point3d center{0, 0, -(canvas_dist + radius)};
   SDL_Color color{255, 0, 0, 255};
-  auto red_ball = new Graphite::Sphere(center, radius, color);
+  auto red_ball = new Graphite::Object::Sphere(center, radius, color);
   red_ball->set_reflection(2);
 
   // create light

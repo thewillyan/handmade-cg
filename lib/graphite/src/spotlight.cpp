@@ -4,12 +4,12 @@ using namespace Graphite::Light;
 
 Spot::Spot(Algebrick::Point3d point, Intensity base_intensity,
            Algebrick::Vec3d direction, double angle)
-    : p{point}, i{base_intensity}, direction{direction.norm()},
-      aperture{angle} {}
+    : p{point}, i{base_intensity}, direction{direction.norm()}, aperture{
+                                                                    angle} {}
 
-Intensity Spot::get_intensity(const Object &inter_obj,
-                              std::vector<Object *> objs,
-                              const PointColor &inter,
+Intensity Spot::get_intensity(const Object::Object &inter_obj,
+                              std::vector<Object::Object *> objs,
+                              const Object::PointColor &inter,
                               const Algebrick::Ray &eye_ray) const {
   // check if the point is inside the cone
   Algebrick::Vec3d L = (p - inter.first);

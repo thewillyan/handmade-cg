@@ -16,10 +16,11 @@ private:
 
 public:
   Spot(Algebrick::Point3d point, Intensity base_intensity,
-            Algebrick::Vec3d direction, double aperture);
+       Algebrick::Vec3d direction, double aperture);
 
-  Intensity get_intensity(const Object &obj, std::vector<Object *> objs,
-                          const PointColor &inter,
+  Intensity get_intensity(const Object::Object &obj,
+                          std::vector<Object::Object *> objs,
+                          const Object::PointColor &inter,
                           const Algebrick::Ray &eye_ray) const override;
   void transform(const Algebrick::Matrix &m) override;
 };

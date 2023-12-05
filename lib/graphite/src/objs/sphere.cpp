@@ -1,17 +1,16 @@
-#include "graphite/include/sphere.hpp"
+#include "graphite/include/objs/sphere.hpp"
 #include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
-#include "graphite/include/object.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor)
     : center{c}, radius{r}, color{pcolor}, reflect{1}, dif{1, 1, 1},
@@ -59,9 +58,9 @@ Sphere::normal(const Algebrick::Point3d &p) const {
 
 double Sphere::get_reflection() const { return reflect; }
 void Sphere::set_reflection(double k) { reflect = k; }
-Light::Intensity Sphere::get_dif_int() const { return dif; }
-Light::Intensity Sphere::get_espec_int() const { return espec; }
-Light::Intensity Sphere::get_env_int() const { return env; }
+Graphite::Light::Intensity Sphere::get_dif_int() const { return dif; }
+Graphite::Light::Intensity Sphere::get_espec_int() const { return espec; }
+Graphite::Light::Intensity Sphere::get_env_int() const { return env; }
 
 void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
 void Sphere::scale(double k) { radius *= k; }

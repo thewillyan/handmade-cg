@@ -1,18 +1,18 @@
 #ifndef Graphite_Light_Source
 #define Graphite_Light_Source
 
-#include "../../algebrick/include/ray.hpp"
+#include "algebrick/include/ray.hpp"
 #include "intensity.hpp"
-#include "object.hpp"
+#include "objs/object.hpp"
 #include <vector>
 
 namespace Graphite::Light {
 
 class Source {
 public:
-  virtual Intensity get_intensity(const Object &inter_obj,
-                                  std::vector<Object *> objs,
-                                  const PointColor &inter,
+  virtual Intensity get_intensity(const Graphite::Object::Object &inter_obj,
+                                  std::vector<Graphite::Object::Object *> objs,
+                                  const Graphite::Object::PointColor &inter,
                                   const Algebrick::Ray &eye_ray) const = 0;
   virtual void transform(const Algebrick::Matrix &matrix) = 0;
 };

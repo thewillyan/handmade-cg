@@ -3,12 +3,12 @@
 
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include "graphite/include/circular_plane.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/circular_plane.hpp"
 #include "object.hpp"
 #include <optional>
 
-namespace Graphite {
+namespace Graphite::Object {
 
 class Cilinder : public Object {
 private:
@@ -47,6 +47,6 @@ public:
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // Graphite_Cilinder
