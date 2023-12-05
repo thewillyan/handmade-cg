@@ -2,6 +2,7 @@
 #define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/object.hpp"
 #include "graphite/include/triangular_plane.hpp"
 #include <vector>
 
@@ -72,7 +73,7 @@ public:
   HalfEdge *get_edge();
 };
 
-class TriMesh {
+class TriMesh : public Object {
 private:
   // list of vertices in the mesh.
   std::vector<Vertex *> vertices;
@@ -82,8 +83,15 @@ private:
   // pre-process the faces vector.
   std::vector<Face *> faces;
 
+  double shiness;
+  Light::Intensity dif;
+  Light::Intensity spec;
+  Light::Intensity env;
+
 public:
   TriMesh();
+  TriMesh(double shiness, Light::Intensity dif, Light::Intensity spec,
+          Light::Intensity env);
 
   // Creates a new triangular face with the given points.
   //
@@ -96,6 +104,21 @@ public:
                                            Light::Intensity espec,
                                            Light::Intensity diff);
 
+  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
+  std::optional<Algebrick::Vec3d> normal(const Algebrick::Point3d &p) const;
+
+  // getters
+  double get_reflection() const;
+  Light::Intensity get_dif_int() const;
+  Light::Intensity get_espec_int() const;
+  Light::Intensity get_env_int() const;
+
+  // transformations
+  void translate(const Algebrick::Vec3d &offset);
+  void scale(double k);
+  void transform(const Algebrick::Matrix &matrix);
+
+  // TODO: rotation
   // TODO:
   //  - transform into multiple TriangularPlane's?
 };

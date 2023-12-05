@@ -1,11 +1,9 @@
 #ifndef Algebrick_Matrix
 #define Algebrick_Matrix
 
-#include "point3d.hpp"
 #include "vec3d.hpp"
 #include <cstddef>
 #include <initializer_list>
-#include <optional>
 #include <vector>
 
 namespace Algebrick {
@@ -33,6 +31,7 @@ public:
   static Matrix inv(Matrix);
   static Matrix identity(size_t);
   static Matrix translation(const Vec3d &offset);
+  static Matrix scale(const Vec3d &k);
 
   Matrix operator*(const Matrix &) const;
   Matrix operator*(const Vec3d &) const;

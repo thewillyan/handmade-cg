@@ -2,7 +2,6 @@
 #include "../include/vec3d.hpp"
 #include <cstddef>
 #include <initializer_list>
-#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -109,10 +108,21 @@ Matrix Matrix::identity(size_t size) {
 }
 
 Matrix Matrix::translation(const Vec3d &offset) {
-  return {{1, 0, 0, offset.x},
-          {0, 1, 0, offset.y},
-          {0, 0, 1, offset.z},
-          {0, 0, 0, 1}};
+  return {
+      {1, 0, 0, offset.x},
+      {0, 1, 0, offset.y},
+      {0, 0, 1, offset.z},
+      {0, 0, 0, 1},
+  };
+}
+
+Matrix scale(const Vec3d &k) {
+  return {
+      {k.x, 0, 0, 0},
+      {0, k.y, 0, 0},
+      {0, 0, k.z, 0},
+      {0, 0, 0, 1},
+  };
 }
 
 size_t Matrix::get_lines() const { return m; }

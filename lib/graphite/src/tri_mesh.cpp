@@ -1,6 +1,9 @@
 #include "graphite/include/tri_mesh.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/object.hpp"
 #include "graphite/include/triangular_plane.hpp"
+#include <cmath>
 #include <utility>
 
 using namespace Graphite::Mesh;
@@ -48,7 +51,10 @@ Face::Face() : head{nullptr} {}
 Face::Face(HalfEdge &e) : head{&e} {}
 HalfEdge *Face::get_edge() { return head; }
 
-TriMesh::TriMesh() {}
+TriMesh::TriMesh() : shiness{1}, dif{1, 1, 1}, spec{1, 1, 1}, env{1, 1, 1} {}
+TriMesh::TriMesh(double shiness, Light::Intensity dif, Light::Intensity spec,
+                 Light::Intensity env)
+    : shiness{shiness}, dif{dif}, spec{spec}, env{env} {}
 
 void TriMesh::add_face(Algebrick::Point3d points[3]) {
   // v0
@@ -137,4 +143,65 @@ TriMesh::face_planes(double shiness, Light::Intensity env,
                                                shiness, env, espec, diff});
   }
   return planes;
+}
+
+std::optional<Graphite::PointColor>
+TriMesh::intersect(const Algebrick::Ray &ray) const {
+  double min_t = INFINITY;
+  std::optional<Graphite::PointColor> min_p;
+  Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+  size_t curr_point;
+  for (Face *f : faces) {
+    HalfEdge *e = f->get_edge();
+    curr_point = 0;
+    do {
+      pbuff[curr_point++] = e->get_origin()->get_point();
+      e = e->get_next();
+    } while (e->get_next() != f->get_edge());
+    auto t = Graphite::TriangularPlane{pbuff[0], pbuff[1], pbuff[2], shiness,
+                                       env,      spec,     dif};
+    auto intersect = t.intersect(ray);
+    if (intersect.has_value()) {
+      double curr_t = (intersect->first - ray.source()).length();
+      if (curr_t < min_t) {
+        min_t = curr_t;
+        min_p = intersect;
+      }
+    }
+  }
+  return min_p;
+}
+
+std::optional<Algebrick::Vec3d>
+TriMesh::normal(const Algebrick::Point3d &p) const {
+  // TODO: do this.
+  return {};
+}
+
+// getters
+double TriMesh::get_reflection() const { return shiness; }
+Graphite::Light::Intensity TriMesh::get_dif_int() const { return dif; }
+Graphite::Light::Intensity TriMesh::get_espec_int() const { return spec; }
+Graphite::Light::Intensity TriMesh::get_env_int() const { return env; }
+
+// transformations
+void TriMesh::translate(const Algebrick::Vec3d &offset) {
+  for (Vertex *v : vertices) {
+    v->get_point() += offset;
+  }
+}
+
+void TriMesh::scale(double k) {
+  for (Vertex *v : vertices) {
+    v->get_point() *= k;
+  }
+}
+
+void TriMesh::transform(const Algebrick::Matrix &matrix) {
+  for (Vertex *v : vertices) {
+    Algebrick::Point3d &p = v->get_point();
+    Algebrick::Matrix p_matrix = {{p.x}, {p.y}, {p.z}, {1}};
+    Algebrick::Matrix new_p = matrix * p_matrix;
+    p = {new_p.get(0, 0), new_p.get(1, 0), new_p.get(2, 0)};
+  }
 }
