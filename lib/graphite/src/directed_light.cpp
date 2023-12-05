@@ -1,6 +1,7 @@
 #include "graphite/include/directed_light.hpp"
 #include "algebrick/include/ray.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include <cmath>
 
@@ -40,21 +41,22 @@ Intensity Directed::get_intensity(const Object::Object &inter_obj,
   if (!n.has_value())
     return {0, 0, 0};
 
+  Object::ObjectIntensity oi = inter_obj.get_intensity(inter.first);
   Algebrick::Vec3d v = -eye_ray.direction();
   Algebrick::Vec3d r = ((*n) * ((*n) * l * 2)) - l;
 
-  Intensity i_dif = (i * inter_obj.get_dif_int()) * (l * (*n));
-  double reflect = inter_obj.get_reflection();
+  Intensity i_dif = (i * oi.get_diffuse_intensity()) * (l * (*n));
+  double reflect = oi.get_shineness();
   double rv = r * v;
 
   Intensity i_esp{0, 0, 0};
   if (rv > 0) {
-    i_esp = (i * inter_obj.get_espec_int()) * std::pow(r * v, reflect);
+    i_esp = (i * oi.get_specular_intensity()) * std::pow(r * v, reflect);
   }
 
-  // double d =
-  //     (decay.x * std::pow(L.length(), 2)) + (decay.y * L.length()) + decay.z;
-  return (i_dif + i_esp) / 1;
+  double d =
+      (decay.x * std::pow(L.length(), 2)) + (decay.y * L.length()) + decay.z;
+  return (i_dif + i_esp) / d;
 }
 
 void Directed::transform(const Algebrick::Matrix &m) {

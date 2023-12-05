@@ -2,6 +2,7 @@
 #include "algebrick/include/matrix.hpp"
 #include "algebrick/include/ray.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <cmath>
@@ -13,11 +14,11 @@
 using namespace Graphite;
 
 Space::Space()
-    : objs{std::vector<Object::Object *>()},
-      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector<Object::Object *>()}, ambient_light{1, 1, 1},
+      transform{Algebrick::Matrix::identity(4)} {}
 Space::Space(std::initializer_list<Object::Object *> lst)
-    : objs{std::vector(lst)},
-      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector(lst)}, ambient_light{1, 1, 1},
+      transform{Algebrick::Matrix::identity(4)} {}
 Space::~Space() {}
 
 void Space::add_obj(Object::Object *obj) { objs.push_back(obj); }
@@ -27,7 +28,8 @@ void Space::set_ambient_light(Light::Intensity i) { ambient_light = i; }
 Light::Intensity Space::light_intensity(const Object::Object &obj,
                                         const Object::PointColor &inter,
                                         const Algebrick::Ray &eye_ray) const {
-  Light::Intensity total = (ambient_light * obj.get_env_int());
+  Object::ObjectIntensity oi = obj.get_intensity(inter.first);
+  Light::Intensity total = (ambient_light * oi.get_ambient_intensity());
   for (auto l : lights) {
     total = total + l->get_intensity(obj, objs, inter, eye_ray);
   }
