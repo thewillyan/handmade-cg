@@ -3,13 +3,11 @@
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/object.hpp"
 #include <cmath>
-#include <stdexcept>
 
 using namespace Graphite::Light;
 
-Directed::Directed(Algebrick::Point3d point, Intensity light_int,
-                   Algebrick::Vec3d direction)
-    : p{point}, i{light_int}, decay{1, 0, 0}, direction{direction.norm()} {}
+Directed::Directed(Intensity light_int, Algebrick::Vec3d direction)
+    : i{light_int}, decay{1, 0, 0}, direction{direction.norm()} {}
 
 void Directed::set_decay(double a, double b, double c) { decay = {a, b, c}; }
 
@@ -19,24 +17,19 @@ Intensity Directed::get_intensity(const Object &inter_obj,
                                   const Algebrick::Ray &eye_ray) const {
 
   // check if same direction
-  Algebrick::Vec3d L = (p - inter.first);
+  Algebrick::Vec3d L = -direction;
   Algebrick::Vec3d l = L.norm();
-  double angle = acos(l * direction * -1);
-
-  if (angle > M_PI / 2) {
-    return {0, 0, 0};
-  }
 
   // check other objects intersections
-  double ray_len = L.length();
-  Algebrick::Ray light_ray{p, inter.first};
+  double light_length = 0;
+  Algebrick::Ray light_ray{inter.first, -direction};
   for (auto &obj : objs) {
     if (obj != &inter_obj) {
       auto other_inter = obj->intersect(light_ray);
       if (other_inter.has_value()) {
-        Algebrick::Vec3d other_inter_vec = (other_inter->first - p);
+        Algebrick::Vec3d other_inter_vec = (other_inter->first - inter.first);
         double other_inter_len = other_inter_vec.length();
-        if (ray_len >= other_inter_len) {
+        if (other_inter_len >= light_length) {
           return {0, 0, 0};
         }
       }
@@ -65,7 +58,7 @@ Intensity Directed::get_intensity(const Object &inter_obj,
 }
 
 void Directed::transform(const Algebrick::Matrix &m) {
-  //TODO: remove the point from the directed light
+  // TODO: remove the point from the directed light
   Algebrick::Matrix direction_4d = {
       {direction.x}, {direction.y}, {direction.z}, {1.0}};
   Algebrick::Matrix new_direction = m * direction_4d;
