@@ -117,10 +117,6 @@ public:
   void translate(const Algebrick::Vec3d &offset);
   void scale(double k);
   void transform(const Algebrick::Matrix &matrix);
-
-  // TODO: rotation
-  // TODO:
-  //  - transform into multiple TriangularPlane's?
 };
 } // namespace Graphite::Mesh
 #endif // !Graphite_TriMesh
