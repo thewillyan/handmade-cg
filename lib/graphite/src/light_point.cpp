@@ -17,20 +17,18 @@ void Point::set_decay(double a, double b, double c) { decay = {a, b, c}; }
 
 Intensity Point::get_intensity(const Object::Object &inter_obj,
                                std::vector<Object::Object *> objs,
-                               const Object::PointColor &inter,
+                               const Algebrick::Point3d &inter_point,
                                const Algebrick::Ray &eye_ray) const {
 
-  Algebrick::Vec3d L = (p - inter.first);
+  Algebrick::Vec3d L = (p - inter_point);
   double ray_len = L.length();
 
-  Algebrick::Ray light_ray{p, inter.first};
+  Algebrick::Ray light_ray{p, inter_point};
   for (auto &obj : objs) {
     if (obj->get_id() != inter_obj.get_id()) {
       auto other_inter = obj->intersect(light_ray);
       if (other_inter.has_value()) {
-        Algebrick::Vec3d other_inter_vec = (other_inter->first - p);
-        double other_inter_len = other_inter_vec.length();
-        if (ray_len >= other_inter_len) {
+        if (ray_len >= other_inter->first) {
           return {0, 0, 0};
         }
       }
@@ -38,11 +36,11 @@ Intensity Point::get_intensity(const Object::Object &inter_obj,
   }
 
   Algebrick::Vec3d l = L.norm();
-  auto n = inter_obj.normal(inter.first);
+  auto n = inter_obj.normal(inter_point);
   if (!n.has_value())
     return {0, 0, 0};
 
-  Object::ObjectIntensity oi = inter_obj.get_intensity(inter.first);
+  Object::ObjectIntensity oi = inter_obj.get_intensity(inter_point);
 
   Algebrick::Vec3d v = -eye_ray.direction();
   Algebrick::Vec3d r = ((*n) * ((*n) * l * 2)) - l;
