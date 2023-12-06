@@ -2,6 +2,7 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <SDL2/SDL_pixels.h>
 
 using namespace Graphite::Object;
@@ -15,7 +16,7 @@ Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
              Light::Intensity d, Light::Intensity e, Light::Intensity en)
     : point{p}, norm{n}, color{c}, intensity{s, en, e, d} {}
 
-std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> Plane::intersect(const Algebrick::Ray &ray) const {
   double denom = norm * ray.direction();
   if (denom == 0)
     return {};
@@ -25,9 +26,7 @@ std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
   if (tInt <= 0)
     return {};
 
-  Algebrick::Point3d pInt =
-      ray.source() + Algebrick::Point3d(ray.direction() * tInt);
-  return std::make_pair(pInt, color);
+  return std::make_pair(tInt, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>

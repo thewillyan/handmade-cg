@@ -1,6 +1,7 @@
 #include "graphite/include/objs/circular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <utility>
 
 using namespace Graphite::Object;
@@ -13,7 +14,7 @@ CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n,
                              Light::Intensity es, double s)
     : center{c}, radius{r}, norm{n}, intensity{s, e, d, es} {}
 
-std::optional<PointColor>
+std::optional<RayLenObj>
 CircularPlane::intersect(const Algebrick::Ray &ray) const {
   double denom = norm * ray.direction();
   if (denom == 0)
@@ -30,7 +31,7 @@ CircularPlane::intersect(const Algebrick::Ray &ray) const {
   if (v.length() > radius)
     return {};
 
-  return std::make_pair(Algebrick::Point3d(p), SDL_Color{0, 0, 0, 0});
+  return std::make_pair(tInt, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>

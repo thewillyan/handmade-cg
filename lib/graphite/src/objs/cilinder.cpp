@@ -1,6 +1,7 @@
 #include "graphite/include/objs/cilinder.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <cmath>
 #include <vector>
 
@@ -30,7 +31,7 @@ Cilinder::Cilinder(const Algebrick::Point3d &base_center,
           shineness},
       intensity{shineness, dif, spec, env} {};
 
-std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> Cilinder::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d v =
       (ray.source() - base_center) - dir * ((ray.source() - base_center) * dir);
   Algebrick::Vec3d w = ray.direction() - dir * (ray.direction() * dir);
@@ -42,7 +43,7 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
   if (delta < 0)
     return {};
 
-  std::vector<std::pair<double, Algebrick::Point3d>> valid_points;
+  std::vector<std::pair<double, Object *>> valid_points;
 
   double t1 = (-b + sqrt(delta)) / (2 * a);
   if (t1 >= 0) {
@@ -50,7 +51,7 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
     double inside_p1 = (p1 - base_center) * dir;
 
     if (inside_p1 >= 0 && inside_p1 <= height)
-      valid_points.push_back(std::make_pair(t1, p1));
+      valid_points.push_back(std::make_pair(t1, (Object *)this));
   }
 
   double t2 = (-b - sqrt(delta)) / (2 * a);
@@ -59,41 +60,41 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
     double inside_p2 = (p2 - base_center) * dir;
 
     if (inside_p2 >= 0 && inside_p2 <= height)
-      valid_points.push_back(std::make_pair(t2, p2));
+      valid_points.push_back(std::make_pair(t2, (Object *)this));
   }
 
   auto intersected_base = base.intersect(ray);
   auto intersected_top = top.intersect(ray);
 
   if (intersected_top.has_value() && intersected_base.has_value()) {
-    double cap1 = (intersected_base->first - ray.source()).length();
-    double cap2 = (intersected_top->first - ray.source()).length();
+    double cap1 = intersected_base->first;
+    double cap2 = intersected_top->first;
 
     if (cap1 < cap2) {
-      valid_points.push_back(std::make_pair(cap1, intersected_base->first));
+      valid_points.push_back(std::make_pair(cap1, intersected_base->second));
     } else {
-      valid_points.push_back(std::make_pair(cap2, intersected_top->first));
+      valid_points.push_back(std::make_pair(cap2, intersected_top->second));
     }
   } else if (intersected_base.has_value()) {
-    double t = (intersected_base->first - ray.source()).length();
-    valid_points.push_back(std::make_pair(t, intersected_base->first));
+    valid_points.push_back(
+        std::make_pair(intersected_base->first, intersected_base->second));
   } else if (intersected_top.has_value()) {
-    double t = (intersected_top->first - ray.source()).length();
-    valid_points.push_back(std::make_pair(t, intersected_top->first));
+    valid_points.push_back(
+        std::make_pair(intersected_top->first, intersected_top->second));
   }
 
   double min = INFINITY;
-  Algebrick::Point3d best_point = ray.source();
+  Object *best_obj = nullptr;
 
   for (auto const &p : valid_points) {
     if (p.first < min) {
       min = p.first;
-      best_point = p.second;
+      best_obj = p.second;
     }
   }
 
-  return min == INFINITY ? std::optional<PointColor>{}
-                         : std::make_pair(best_point, SDL_Color{0, 0, 0, 0});
+  return min == INFINITY ? std::optional<RayLenObj>{}
+                         : std::make_pair(min, best_obj);
 }
 
 std::optional<Algebrick::Vec3d>

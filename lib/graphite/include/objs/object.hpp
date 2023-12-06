@@ -12,7 +12,9 @@
 
 namespace Graphite::Object {
 
-using PointColor = std::pair<Algebrick::Point3d, SDL_Color>;
+class Object;
+
+using RayLenObj = std::pair<double, Object *>;
 
 class Object {
 
@@ -23,8 +25,7 @@ private:
 
 public:
   Object() : visible{true}, id{id_counter++} {};
-  // TODO: replace return value by a tuple of the format (double, *Object).
-  virtual std::optional<PointColor>
+  virtual std::optional<RayLenObj>
   intersect(const Algebrick::Ray &ray) const = 0;
   virtual std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const = 0;
