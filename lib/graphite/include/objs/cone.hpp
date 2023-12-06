@@ -1,6 +1,7 @@
 #ifndef Graphite_Cone
 #define Graphite_Cone
 
+#include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
@@ -34,6 +35,7 @@ public:
   normal(const Algebrick::Point3d &p) const override;
   void translate(const Algebrick::Vec3d &offset) override;
   void scale(double k) override;
+  void transform(const Algebrick::Matrix &) override;
 
   // getters
   ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;

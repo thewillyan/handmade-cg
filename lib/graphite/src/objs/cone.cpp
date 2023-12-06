@@ -1,4 +1,5 @@
 #include "graphite/include/objs/cone.hpp"
+#include "algebrick/include/matrix.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "cmath"
@@ -14,7 +15,7 @@ Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n)
     : radius{r}, height{h}, aperture{std::acos(h / std::sqrt(r * r + h * h))},
       norm{n.norm()}, center{base_center}, top{base_center + n.norm() * h},
-      base{base_center, r, n.norm()} {}
+      base{base_center, r, -n.norm()} {}
 
 Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n, double shiness, Light::Intensity env,
@@ -113,6 +114,23 @@ void Cone::translate(const Algebrick::Vec3d &offset) {
   center += offset;
   top += offset;
   base.translate(offset);
+}
+
+void Cone::transform(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix center_4d = {{center.x}, {center.y}, {center.z}, {1}};
+  Algebrick::Matrix new_center = matrix * center_4d;
+  center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
+
+  Algebrick::Matrix top_4d = {{top.x}, {top.y}, {top.z}, {1}};
+  Algebrick::Matrix new_top = matrix * top_4d;
+  top = {new_top.get(0, 0), new_top.get(1, 0), new_top.get(2, 0)};
+
+  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {0}};
+  Algebrick::Matrix new_norm = matrix * norm_4d;
+  norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
+  norm = norm.norm();
+
+  base.transform(matrix);
 }
 
 void Cone::scale(double k) {
