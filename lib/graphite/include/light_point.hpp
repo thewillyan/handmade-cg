@@ -20,7 +20,7 @@ public:
   // source definitions
   Intensity get_intensity(const Object::Object &obj,
                           std::vector<Object::Object *> objs,
-                          const Object::PointColor &inter,
+                          const Algebrick::Point3d &inter_point,
                           const Algebrick::Ray &eye_ray) const override;
   // setters
   void set_decay(double a, double b, double c);

@@ -2,6 +2,7 @@
 #define Graphite_Space_H
 
 #include "algebrick/include/matrix.hpp"
+#include "algebrick/include/point3d.hpp"
 #include "algebrick/include/ray.hpp"
 #include "intensity.hpp"
 #include "light.hpp"
@@ -32,9 +33,9 @@ public:
   void reset_transform();
 
   Light::Intensity light_intensity(const Object::Object &obj,
-                                   const Object::PointColor &inter,
+                                   const Algebrick::Point3d &inter_point,
                                    const Algebrick::Ray &eye_ray) const;
-  std::optional<Object::PointColor> intersect(const Algebrick::Ray &ray) const;
+  std::optional<SDL_Color> intersect(const Algebrick::Ray &ray) const;
 };
 
 } // namespace Graphite

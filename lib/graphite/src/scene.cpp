@@ -92,11 +92,11 @@ void Scene::render(Canvas &c, double d) const {
         ray = new Algebrick::Ray{p, oblique_dir};
         break;
       }
-      std::optional<Object::PointColor> point_color = space->intersect(*ray);
+      std::optional<SDL_Color> point_color = space->intersect(*ray);
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};
       std::optional<SDL_Color> color =
-          (point_color.has_value()) ? point_color->second : bg;
+          (point_color.has_value()) ? point_color : bg;
 
       if (color.has_value()) {
         c.set_pixel(canvas_point, *color);
