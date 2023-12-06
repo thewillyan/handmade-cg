@@ -23,7 +23,7 @@ public:
         Light::Intensity, Light::Intensity, Light::Intensity);
 
   // implement object
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;
   ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;

@@ -20,13 +20,13 @@ public:
   CircularPlane(Algebrick::Point3d, double, Algebrick::Vec3d, Light::Intensity,
                 Light::Intensity, Light::Intensity, double);
 
-  virtual std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
-  virtual std::optional<Algebrick::Vec3d>
-  normal(const Algebrick::Point3d &p) const;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<Algebrick::Vec3d>
+  normal(const Algebrick::Point3d &p) const override;
 
   // transformtions
-  void translate(const Algebrick::Vec3d &offset);
-  void scale(double k);
+  void translate(const Algebrick::Vec3d &offset) override;
+  void scale(double k) override;
   void transform(const Algebrick::Matrix &matrix) override;
 
   // getters

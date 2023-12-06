@@ -24,15 +24,15 @@ public:
                   double shiness, Light::Intensity env, Light::Intensity espec,
                   Light::Intensity diff);
 
-  virtual std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
 
-  virtual std::optional<Algebrick::Vec3d>
-  normal(const Algebrick::Point3d &p) const;
+  std::optional<Algebrick::Vec3d>
+  normal(const Algebrick::Point3d &p) const override;
 
   // transformations
-  void translate(const Algebrick::Vec3d &offset);
-  void scale(double k);
-  void transform(const Algebrick::Matrix &matrix);
+  void translate(const Algebrick::Vec3d &offset) override;
+  void scale(double k) override;
+  void transform(const Algebrick::Matrix &matrix) override;
 
   // getters
   ObjectIntensity get_intensity(const Algebrick::Point3d &) const override;

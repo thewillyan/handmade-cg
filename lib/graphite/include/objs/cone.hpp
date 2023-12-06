@@ -29,7 +29,7 @@ public:
        Algebrick::Vec3d n, double shiness, Light::Intensity env,
        Light::Intensity esp, Light::Intensity dif);
 
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
 
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;

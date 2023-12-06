@@ -25,7 +25,7 @@ TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
   norm = r1.cross(r2).norm();
 }
 
-std::optional<PointColor>
+std::optional<RayLenObj>
 TriangularPlane::intersect(const Algebrick::Ray &ray) const {
   double k = -((ray.source() - p0) * norm) / (ray.direction() * norm);
   if (k < 0) {
@@ -54,7 +54,7 @@ TriangularPlane::intersect(const Algebrick::Ray &ray) const {
     return {};
   }
 
-  return std::make_pair(p_int, SDL_Color{0, 0, 0, 255});
+  return std::make_pair(k, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>

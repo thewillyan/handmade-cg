@@ -21,7 +21,7 @@ Sphere::Sphere(Algebrick::Point3d c, double r, SDL_Color pcolor,
     : center{c}, radius{r}, color{pcolor}, intensity{1, en, esp, d} {}
 Sphere::~Sphere() {}
 
-std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> Sphere::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d w = ray.source() - center;
   double w_dr = w * ray.direction();
   double b = 2 * w_dr;
@@ -45,9 +45,7 @@ std::optional<PointColor> Sphere::intersect(const Algebrick::Ray &ray) const {
     ray_inter_scalar = std::min(x1, x2);
   }
 
-  Algebrick::Point3d inter_point =
-      ray.source() + Algebrick::Point3d(ray.direction() * ray_inter_scalar);
-  return std::make_pair(std::move(inter_point), color);
+  return std::make_pair(ray_inter_scalar, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>

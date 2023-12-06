@@ -147,9 +147,9 @@ std::vector<TriangularPlane> TriMesh::face_planes(double shiness,
   return planes;
 }
 
-std::optional<PointColor> TriMesh::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> TriMesh::intersect(const Algebrick::Ray &ray) const {
   double min_t = INFINITY;
-  std::optional<PointColor> min_p;
+  std::optional<RayLenObj> min_p;
   Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   size_t curr_point;
   for (Face *f : faces) {
@@ -168,7 +168,9 @@ std::optional<PointColor> TriMesh::intersect(const Algebrick::Ray &ray) const {
                              intensity.get_diffuse_intensity()};
     auto intersect = t.intersect(ray);
     if (intersect.has_value()) {
-      double curr_t = (intersect->first - ray.source()).length();
+      // TODO: Pode dar pau aqui pq a gente cria o plane nessa parte e ele pode
+      // morrer nesse escopo
+      double curr_t = intersect->first;
       if (curr_t < min_t) {
         min_t = curr_t;
         min_p = intersect;
