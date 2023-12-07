@@ -1,16 +1,16 @@
 #include "algebrick/include/point3d.hpp"
 #include "graphite/include/canvas.hpp"
 #include "graphite/include/light_point.hpp"
-#include "graphite/include/plane.hpp"
+#include "graphite/include/objs/plane.hpp"
+#include "graphite/include/objs/sphere.hpp"
 #include "graphite/include/scene.hpp"
 #include "graphite/include/space.hpp"
-#include "graphite/include/sphere.hpp"
 #include <SDL_stdinc.h>
 #include <cstddef>
 
 const size_t WIN_WIDTH = 500;
 const size_t WIN_HEIGHT = 500;
-unsigned long int Graphite::Object::id_counter = 0;
+unsigned long int Graphite::Object::Object::id_counter = 0;
 
 int main() {
   auto canvas = Graphite::Canvas(WIN_WIDTH, WIN_HEIGHT);
@@ -21,8 +21,8 @@ int main() {
   Algebrick::Point3d center{0, 0, -100};
   SDL_Color color{0, 0, 0, 255};
   Graphite::Light::Intensity ball_k{0.7, 0.2, 0.2};
-  auto red_ball =
-      new Graphite::Sphere(center, radius, color, ball_k, ball_k, ball_k);
+  auto red_ball = new Graphite::Object::Sphere(center, radius, color, ball_k,
+                                               ball_k, ball_k);
   red_ball->set_reflection(10);
   // red_ball->translate({100, 0, 0});
 
@@ -30,13 +30,13 @@ int main() {
   // create planes
   Graphite::Light::Intensity floor_k{0.2, 0.7, 0.2};
   SDL_Color floor_color = {0, 0, 0, 255};
-  Graphite::Plane *floor = new Graphite::Plane(
+  auto *floor = new Graphite::Object::Plane(
       {0, -radius, 0}, {0, 1, 0}, floor_color, 1, floor_k, floor_k, no_ambient);
 
   Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
   SDL_Color wall_color = {0, 0, 0, 255};
-  Graphite::Plane *wall = new Graphite::Plane(
-      {0, 0, -200}, {0, 0, 1}, wall_color, 1, wall_k, wall_k, no_ambient);
+  auto *wall = new Graphite::Object::Plane({0, 0, -200}, {0, 0, 1}, wall_color,
+                                           1, wall_k, wall_k, no_ambient);
 
   // create light
   auto light = new Graphite::Light::Point({0, 60, -30}, {0.7, 0.7, 0.7});

@@ -2,11 +2,12 @@
 #define Graphite_TriMesh
 
 #include "algebrick/include/point3d.hpp"
-#include "graphite/include/object.hpp"
-#include "graphite/include/triangular_plane.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
+#include "graphite/include/objs/object.hpp"
+#include "graphite/include/objs/triangular_plane.hpp"
 #include <vector>
 
-namespace Graphite::Mesh {
+namespace Graphite::Object {
 
 class Vertex {
 private:
@@ -82,11 +83,7 @@ private:
   // `TriangularPlane` so only three points faces can be used without
   // pre-process the faces vector.
   std::vector<Face *> faces;
-
-  double shiness;
-  Light::Intensity dif;
-  Light::Intensity spec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   TriMesh();
@@ -104,19 +101,17 @@ public:
                                            Light::Intensity espec,
                                            Light::Intensity diff);
 
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const;
-  std::optional<Algebrick::Vec3d> normal(const Algebrick::Point3d &p) const;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<Algebrick::Vec3d>
+  normal(const Algebrick::Point3d &p) const override;
 
   // getters
-  double get_reflection() const;
-  Light::Intensity get_dif_int() const;
-  Light::Intensity get_espec_int() const;
-  Light::Intensity get_env_int() const;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &) const override;
 
   // transformations
-  void translate(const Algebrick::Vec3d &offset);
-  void scale(double k);
-  void transform(const Algebrick::Matrix &matrix);
+  void translate(const Algebrick::Vec3d &offset) override;
+  void scale(double k) override;
+  void transform(const Algebrick::Matrix &matrix) override;
 };
-} // namespace Graphite::Mesh
+} // namespace Graphite::Object
 #endif // !Graphite_TriMesh

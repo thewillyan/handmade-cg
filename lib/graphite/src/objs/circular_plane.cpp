@@ -1,21 +1,20 @@
-#include "graphite/include/circular_plane.hpp"
+#include "graphite/include/objs/circular_plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n)
-    : center{c}, radius{r}, norm{n}, env{1, 1, 1}, dif{1, 1, 1}, espec{1, 1, 1},
-      shiness{1} {}
+    : center{c}, radius{r}, norm{n} {}
 
 CircularPlane::CircularPlane(Algebrick::Point3d c, double r, Algebrick::Vec3d n,
                              Light::Intensity e, Light::Intensity d,
                              Light::Intensity es, double s)
+    : center{c}, radius{r}, norm{n}, intensity{s, e, d, es} {}
 
-    : center{c}, radius{r}, norm{n}, env{e}, dif{d}, espec{es}, shiness{s} {}
-
-std::optional<PointColor>
+std::optional<RayLenObj>
 CircularPlane::intersect(const Algebrick::Ray &ray) const {
   double denom = norm * ray.direction();
   if (denom == 0)
@@ -32,7 +31,7 @@ CircularPlane::intersect(const Algebrick::Ray &ray) const {
   if (v.length() > radius)
     return {};
 
-  return std::make_pair(Algebrick::Point3d(p), SDL_Color{0, 0, 0, 0});
+  return std::make_pair(tInt, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>
@@ -41,10 +40,10 @@ CircularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 }
 
 // getters
-double CircularPlane::get_reflection() const { return shiness; }
-Light::Intensity CircularPlane::get_dif_int() const { return dif; }
-Light::Intensity CircularPlane::get_espec_int() const { return espec; }
-Light::Intensity CircularPlane::get_env_int() const { return env; }
+ObjectIntensity CircularPlane::get_intensity(
+    [[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+};
 
 void CircularPlane::translate(const Algebrick::Vec3d &offset) {
   center += offset;
@@ -55,7 +54,8 @@ void CircularPlane::transform(const Algebrick::Matrix &matrix) {
   Algebrick::Matrix new_center = matrix * center_4d;
   center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
 
-  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {1}};
+  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {0}};
   Algebrick::Matrix new_norm = matrix * norm_4d;
   norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
+  norm = norm.norm();
 }
