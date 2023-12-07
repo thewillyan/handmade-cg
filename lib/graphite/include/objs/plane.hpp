@@ -5,6 +5,7 @@
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
+#include "graphite/include/texture.hpp"
 #include "object.hpp"
 #include <optional>
 
@@ -14,8 +15,12 @@ class Plane : public Object {
 private:
   Algebrick::Point3d point;
   Algebrick::Vec3d norm;
+  Algebrick::Vec3d paxis_x;
+  Algebrick::Vec3d paxis_y;
+
   SDL_Color color;
   ObjectIntensity intensity;
+  Texture *texture;
 
 public:
   Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s);
@@ -35,6 +40,7 @@ public:
 
   // setters
   void set_reflection(double k);
+  void set_texture(Texture *t);
 };
 } // namespace Graphite::Object
 
