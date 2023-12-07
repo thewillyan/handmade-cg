@@ -1,20 +1,22 @@
-#include "graphite/include/plane.hpp"
+#include "graphite/include/objs/plane.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <SDL2/SDL_pixels.h>
-#include <utility>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s)
-    : point{p}, norm{n}, color{c}, shine{s}, dif{1, 1, 1}, espec{1, 1, 1},
-      env{1, 1, 1} {}
+    : point{p}, norm{n}, color{c} {
+  intensity.set_shineness(s);
+}
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
              Light::Intensity d, Light::Intensity e, Light::Intensity en)
-    : point{p}, norm{n}, color{c}, shine{s}, dif{d}, espec{e}, env{en} {}
+    : point{p}, norm{n}, color{c}, intensity{s, en, e, d} {}
 
-std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> Plane::intersect(const Algebrick::Ray &ray) const {
   double denom = norm * ray.direction();
   if (denom == 0)
     return {};
@@ -24,9 +26,7 @@ std::optional<PointColor> Plane::intersect(const Algebrick::Ray &ray) const {
   if (tInt <= 0)
     return {};
 
-  Algebrick::Point3d pInt =
-      ray.source() + Algebrick::Point3d(ray.direction() * tInt);
-  return std::make_pair(pInt, color);
+  return std::make_pair(tInt, (Object *)this);
 }
 
 std::optional<Algebrick::Vec3d>
@@ -34,11 +34,11 @@ Plane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
   return norm;
 }
 
-double Plane::get_reflection() const { return shine; }
-void Plane::set_reflection(double k) { shine = k; }
-Light::Intensity Plane::get_dif_int() const { return dif; }
-Light::Intensity Plane::get_espec_int() const { return espec; }
-Light::Intensity Plane::get_env_int() const { return env; }
+void Plane::set_reflection(double k) { intensity.set_shineness(k); }
+ObjectIntensity
+Plane::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+}
 
 void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }
 void Plane::scale([[maybe_unused]] double k) {

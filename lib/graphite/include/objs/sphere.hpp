@@ -1,22 +1,20 @@
 #ifndef Graphite_Sphere_Obj
 #define Graphite_Sphere_Obj
 
-#include "../../algebrick/include/point3d.hpp"
 #include "algebrick/include/matrix.hpp"
+#include "algebrick/include/point3d.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "object.hpp"
 #include <SDL2/SDL_pixels.h>
 
-namespace Graphite {
+namespace Graphite::Object {
 class Sphere : public Object {
 private:
   Algebrick::Point3d center;
   double radius;
   SDL_Color color;
-  double reflect;
-  Light::Intensity dif;
-  Light::Intensity espec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   Sphere(Algebrick::Point3d, double, SDL_Color);
@@ -25,13 +23,10 @@ public:
 
   // object implementations
   ~Sphere();
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;
-  double get_reflection() const override;
-  Light::Intensity get_dif_int() const override;
-  Light::Intensity get_espec_int() const override;
-  Light::Intensity get_env_int() const override;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;
@@ -41,6 +36,6 @@ public:
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // !Graphite_Sphere_Obj

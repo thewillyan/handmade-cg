@@ -3,16 +3,15 @@
 
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include "graphite/include/circular_plane.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/circular_plane.hpp"
 #include "object.hpp"
 #include <optional>
 
-namespace Graphite {
+namespace Graphite::Object {
 
 class Cilinder : public Object {
 private:
-  double shineness;
   double radius;
   double height;
   Algebrick::Vec3d dir;
@@ -20,10 +19,7 @@ private:
   // TODO: Remove this and define the cylinder mathematically
   CircularPlane base;
   CircularPlane top;
-
-  Light::Intensity dif;
-  Light::Intensity spec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   Cilinder(const Algebrick::Point3d &, const Algebrick::Vec3d &, double, double,
@@ -32,21 +28,19 @@ public:
            double, const Light::Intensity &, const Light::Intensity &,
            const Light::Intensity &);
 
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;
-  double get_reflection() const override;
-  Light::Intensity get_dif_int() const override;
-  Light::Intensity get_espec_int() const override;
-  Light::Intensity get_env_int() const override;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;
   void scale(double k) override;
+  void transform(const Algebrick::Matrix &) override;
 
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // Graphite_Cilinder

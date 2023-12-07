@@ -1,26 +1,27 @@
-#include "graphite/include/cilinder.hpp"
+#include "graphite/include/objs/cilinder.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
+#include "graphite/include/objs/object.hpp"
 #include <cmath>
 #include <vector>
 
-using namespace Graphite;
+using namespace Graphite::Object;
 
 Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
                    double shineness)
-    : shineness{shineness}, radius{radius}, height{height}, dir{dir.norm()},
-      base_center{base_center}, base{base_center, radius, dir.norm() * -1},
-      top{base_center + dir.norm() * height, radius, dir.norm()}, dif{1, 1, 1},
-      spec{1, 1, 1}, env{1, 1, 1} {}
+    : radius{radius}, height{height}, dir{dir.norm()}, base_center{base_center},
+      base{base_center, radius, dir.norm() * -1},
+      top{base_center + dir.norm() * height, radius, dir.norm()} {
+  intensity.set_shineness(shineness);
+};
 
 Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
                    double shineness, const Light::Intensity &dif,
                    const Light::Intensity &spec, const Light::Intensity &env)
-    : shineness{shineness}, radius{radius}, height{height}, dir{dir.norm()},
-      base_center{base_center}, base{base_center, radius, dir.norm() * -1, dif,
-                                     spec,        env,    shineness},
+    : radius{radius}, height{height}, dir{dir.norm()}, base_center{base_center},
+      base{base_center, radius, dir.norm() * -1, dif, spec, env, shineness},
       top{base_center + dir.norm() * height,
           radius,
           dir.norm(),
@@ -28,9 +29,9 @@ Cilinder::Cilinder(const Algebrick::Point3d &base_center,
           spec,
           env,
           shineness},
-      dif{dif}, spec{spec}, env{env} {}
+      intensity{shineness, dif, spec, env} {};
 
-std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
+std::optional<RayLenObj> Cilinder::intersect(const Algebrick::Ray &ray) const {
   Algebrick::Vec3d v =
       (ray.source() - base_center) - dir * ((ray.source() - base_center) * dir);
   Algebrick::Vec3d w = ray.direction() - dir * (ray.direction() * dir);
@@ -42,7 +43,7 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
   if (delta < 0)
     return {};
 
-  std::vector<std::pair<double, Algebrick::Point3d>> valid_points;
+  std::vector<std::pair<double, Object *>> valid_points;
 
   double t1 = (-b + sqrt(delta)) / (2 * a);
   if (t1 >= 0) {
@@ -50,7 +51,7 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
     double inside_p1 = (p1 - base_center) * dir;
 
     if (inside_p1 >= 0 && inside_p1 <= height)
-      valid_points.push_back(std::make_pair(t1, p1));
+      valid_points.push_back(std::make_pair(t1, (Object *)this));
   }
 
   double t2 = (-b - sqrt(delta)) / (2 * a);
@@ -59,41 +60,41 @@ std::optional<PointColor> Cilinder::intersect(const Algebrick::Ray &ray) const {
     double inside_p2 = (p2 - base_center) * dir;
 
     if (inside_p2 >= 0 && inside_p2 <= height)
-      valid_points.push_back(std::make_pair(t2, p2));
+      valid_points.push_back(std::make_pair(t2, (Object *)this));
   }
 
   auto intersected_base = base.intersect(ray);
   auto intersected_top = top.intersect(ray);
 
   if (intersected_top.has_value() && intersected_base.has_value()) {
-    double cap1 = (intersected_base->first - ray.source()).length();
-    double cap2 = (intersected_top->first - ray.source()).length();
+    double cap1 = intersected_base->first;
+    double cap2 = intersected_top->first;
 
     if (cap1 < cap2) {
-      valid_points.push_back(std::make_pair(cap1, intersected_base->first));
+      valid_points.push_back(std::make_pair(cap1, intersected_base->second));
     } else {
-      valid_points.push_back(std::make_pair(cap2, intersected_top->first));
+      valid_points.push_back(std::make_pair(cap2, intersected_top->second));
     }
   } else if (intersected_base.has_value()) {
-    double t = (intersected_base->first - ray.source()).length();
-    valid_points.push_back(std::make_pair(t, intersected_base->first));
+    valid_points.push_back(
+        std::make_pair(intersected_base->first, intersected_base->second));
   } else if (intersected_top.has_value()) {
-    double t = (intersected_top->first - ray.source()).length();
-    valid_points.push_back(std::make_pair(t, intersected_top->first));
+    valid_points.push_back(
+        std::make_pair(intersected_top->first, intersected_top->second));
   }
 
   double min = INFINITY;
-  Algebrick::Point3d best_point = ray.source();
+  Object *best_obj = nullptr;
 
   for (auto const &p : valid_points) {
     if (p.first < min) {
       min = p.first;
-      best_point = p.second;
+      best_obj = p.second;
     }
   }
 
-  return min == INFINITY ? std::optional<PointColor>{}
-                         : std::make_pair(best_point, SDL_Color{0, 0, 0, 0});
+  return min == INFINITY ? std::optional<RayLenObj>{}
+                         : std::make_pair(min, best_obj);
 }
 
 std::optional<Algebrick::Vec3d>
@@ -114,15 +115,31 @@ Cilinder::normal(const Algebrick::Point3d &p) const {
 }
 
 // Getters
-double Cilinder::get_reflection() const { return shineness; }
-Light::Intensity Cilinder::get_dif_int() const { return dif; }
-Light::Intensity Cilinder::get_espec_int() const { return spec; }
-Light::Intensity Cilinder::get_env_int() const { return env; }
+Graphite::Object::ObjectIntensity
+Cilinder::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
+  return intensity;
+}
 
 void Cilinder::translate(const Algebrick::Vec3d &offset) {
   base_center += offset;
   base.translate(offset);
   top.translate(offset);
+}
+
+void Cilinder::transform(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix base_center_4d = {
+      {this->base_center.x}, {this->base_center.y}, {this->base_center.z}, {1}};
+  Algebrick::Matrix new_center = matrix * base_center_4d;
+  base_center = {new_center.get(0, 0), new_center.get(1, 0),
+                 new_center.get(2, 0)};
+
+  Algebrick::Matrix dir_4d = {{dir.x}, {dir.y}, {dir.z}, {0}};
+  Algebrick::Matrix new_dir = matrix * dir_4d;
+  dir = {new_dir.get(0, 0), new_dir.get(1, 0), new_dir.get(2, 0)};
+  dir = dir.norm();
+
+  base.transform(matrix);
+  top.transform(matrix);
 }
 void Cilinder::scale(double k) {
   height *= k;

@@ -1,7 +1,8 @@
 #ifndef Graphite_Directed_Light
 #define Graphite_Directed_Light
 
-#include "../../algebrick/include/vec3d.hpp"
+#include "algebrick/include/point3d.hpp"
+#include "algebrick/include/vec3d.hpp"
 #include "light.hpp"
 
 namespace Graphite::Light {
@@ -15,8 +16,9 @@ private:
 public:
   Directed(Intensity base_intensity, Algebrick::Vec3d direction);
 
-  Intensity get_intensity(const Object &obj, std::vector<Object *> objs,
-                          const PointColor &inter,
+  Intensity get_intensity(const Object::Object &obj,
+                          std::vector<Object::Object *> objs,
+                          const Algebrick::Point3d &inter_point,
                           const Algebrick::Ray &eye_ray) const override;
   void set_decay(double a, double b, double c);
   void transform(const Algebrick::Matrix &m) override;

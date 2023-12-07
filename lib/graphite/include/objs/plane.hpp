@@ -4,20 +4,18 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "object.hpp"
 #include <optional>
 
-namespace Graphite {
+namespace Graphite::Object {
 
 class Plane : public Object {
 private:
   Algebrick::Point3d point;
   Algebrick::Vec3d norm;
   SDL_Color color;
-  double shine;
-  Light::Intensity dif;
-  Light::Intensity espec;
-  Light::Intensity env;
+  ObjectIntensity intensity;
 
 public:
   Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s);
@@ -25,13 +23,10 @@ public:
         Light::Intensity, Light::Intensity, Light::Intensity);
 
   // implement object
-  std::optional<PointColor> intersect(const Algebrick::Ray &ray) const override;
+  std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
   std::optional<Algebrick::Vec3d>
   normal(const Algebrick::Point3d &p) const override;
-  double get_reflection() const override;
-  Light::Intensity get_dif_int() const override;
-  Light::Intensity get_espec_int() const override;
-  Light::Intensity get_env_int() const override;
+  ObjectIntensity get_intensity(const Algebrick::Point3d &p) const override;
 
   // transformations
   void translate(const Algebrick::Vec3d &offset) override;
@@ -41,6 +36,6 @@ public:
   // setters
   void set_reflection(double k);
 };
-} // namespace Graphite
+} // namespace Graphite::Object
 
 #endif // Graphite_Plane
