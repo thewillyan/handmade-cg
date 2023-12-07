@@ -2,6 +2,7 @@
 #define OBJECT_INTENSITY_HPP
 
 #include "graphite/include/intensity.hpp"
+#include <SDL2/SDL_pixels.h>
 
 namespace Graphite::Object {
 class ObjectIntensity {
@@ -15,6 +16,7 @@ public:
   ObjectIntensity();
   ObjectIntensity(double, const Light::Intensity &, const Light::Intensity &,
                   const Light::Intensity &);
+  ObjectIntensity(SDL_Color, double);
 
   // methods
   double get_shineness() const;

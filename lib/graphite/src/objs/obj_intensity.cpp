@@ -1,4 +1,5 @@
 #include "graphite/include/objs/obj_intensity.hpp"
+#include <SDL2/SDL_pixels.h>
 
 Graphite::Object::ObjectIntensity::ObjectIntensity()
     : shineness(1), ambient_intensity(1, 1, 1), diffuse_intensity(1, 1, 1),
@@ -11,6 +12,10 @@ Graphite::Object::ObjectIntensity::ObjectIntensity(
     : shineness(shineness), ambient_intensity(ambient_intensity),
       diffuse_intensity(diffuse_intensity),
       specular_intensity(specular_intensity){};
+
+Graphite::Object::ObjectIntensity::ObjectIntensity(SDL_Color c, double s)
+    : shineness(s), ambient_intensity(c), diffuse_intensity(c),
+      specular_intensity(c){};
 
 // methods
 double Graphite::Object::ObjectIntensity::get_shineness() const {
