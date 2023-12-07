@@ -7,7 +7,10 @@
 #include "graphite/include/scene.hpp"
 #include "graphite/include/space.hpp"
 #include "graphite/include/spotlight.hpp"
+#include "graphite/include/texture.hpp"
+#include <SDL_image.h>
 #include <SDL_stdinc.h>
+#include <SDL_surface.h>
 #include <cstddef>
 
 const size_t WIN_WIDTH = 500;
@@ -19,11 +22,14 @@ int main() {
   double canvas_dist = 30;
 
   // create wall
+  SDL_Surface *img = IMG_Load("../../../textures/mine.png");
+  auto *t = new Graphite::Texture(img);
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
   SDL_Color wall_color = {0, 0, 0, 255};
   auto *wall = new Graphite::Object::Plane({0, 0, -200}, {0, 0, 1}, wall_color,
                                            1, wall_k, wall_k, no_ambient);
+  wall->set_texture(t);
 
   // create spotlight
   Graphite::Light::Intensity spotlight_k{0.7, 0.7, 0.7};
@@ -42,7 +48,7 @@ int main() {
   // create space
   auto objs = Graphite::Space();
   objs.add_obj(wall);
-  objs.add_light(spotlight);
+  // objs.add_light(spotlight);
   objs.add_light(directed);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
