@@ -24,7 +24,7 @@ private:
   static unsigned long int id_counter;
 
 public:
-  Object() : visible{true}, id{id_counter++} {};
+  Object();
   virtual std::optional<RayLenObj>
   intersect(const Algebrick::Ray &ray) const = 0;
   virtual std::optional<Algebrick::Vec3d>
@@ -32,18 +32,21 @@ public:
   virtual ~Object(){};
 
   // getters
-  unsigned long int get_id() const { return id; };
-  bool is_visible() const { return visible; };
+  unsigned long int get_id() const;
+  bool is_visible() const;
   virtual ObjectIntensity get_intensity(const Algebrick::Point3d &) const = 0;
 
   // transformations
   virtual void translate(const Algebrick::Vec3d &offset) = 0;
   virtual void scale(double k) = 0;
   virtual void transform(const Algebrick::Matrix &matrix) = 0;
-  // TODO: rotation
+
+  void rotate_x(double angle);
+  void rotate_y(double angle);
+  void rotate_z(double angle);
 
   // setters
-  void set_visible(bool v) { visible = v; };
+  void set_visible(bool v);
 };
 
 } // namespace Graphite::Object
