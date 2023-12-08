@@ -17,7 +17,7 @@ public:
 
   Algebrick::Point3d get_point3d_from_aiVector3D(const aiVector3D &) const;
 
-  Graphite::Object::TriMesh load(const std::string &path) const;
+  Graphite::Object::TriMesh *load(const std::string &path) const;
 };
 }; // namespace Utils
 
