@@ -34,7 +34,7 @@ Utils::MeshLoader::get_point3d_from_aiVector3D(const aiVector3D &vector) const {
   return Algebrick::Point3d(vector.x, vector.y, vector.z);
 }
 
-Graphite::Object::TriMesh
+Graphite::Object::TriMesh *
 Utils::MeshLoader::load(const std::string &path) const {
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(
@@ -43,12 +43,9 @@ Utils::MeshLoader::load(const std::string &path) const {
 
   if (scene == nullptr)
     return {};
-  printf("number of meshes: %d\n", scene->mNumMeshes);
-  printf("number of materials: %d\n", scene->mNumMaterials);
-  printf("number of textures: %d\n", scene->mNumTextures);
 
   auto obj_intensity = get_obj_intensity_from_material(scene->mMaterials[0]);
-  auto tri_mesh = Graphite::Object::TriMesh(
+  auto tri_mesh = new Graphite::Object::TriMesh(
       obj_intensity.get_shineness(), obj_intensity.get_ambient_intensity(),
       obj_intensity.get_specular_intensity(),
       obj_intensity.get_diffuse_intensity());
@@ -61,7 +58,7 @@ Utils::MeshLoader::load(const std::string &path) const {
       auto v1 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[0]]);
       auto v2 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[1]]);
       auto v3 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[2]]);
-      tri_mesh.add_face(std::array{v1, v2, v3});
+      tri_mesh->add_face(std::array{v1, v2, v3});
     }
   }
 
