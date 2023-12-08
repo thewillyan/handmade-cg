@@ -7,6 +7,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <cstddef>
+#include <memory>
 
 Utils::MeshLoader::MeshLoader() = default;
 
@@ -23,16 +24,15 @@ Utils::MeshLoader::get_obj_intensity_from_material(
   material->Get(AI_MATKEY_COLOR_SPECULAR, color);
   auto ks = Graphite::Light::Intensity(color.r, color.g, color.b);
 
-  float spec = 1.0f;
-  material->Get(AI_MATKEY_SHININESS, spec);
+  float shineness = 1.0f;
+  material->Get(AI_MATKEY_SHININESS, shineness);
 
-  return Graphite::Object::ObjectIntensity(10, SDL_Color{125, 0, 0, 255},
-                                           {0, 0, 0}, {0, 0, 0});
+  return Graphite::Object::ObjectIntensity(shineness, ka, ks, kd);
 };
 
 Algebrick::Point3d
 Utils::MeshLoader::get_point3d_from_aiVector3D(const aiVector3D &vector) const {
-  std::cout << vector.x << ',' << vector.y << ',' << vector.z << std::endl;
+  // std::cout << vector.x << ',' << vector.y << ',' << vector.z << std::endl;
   return Algebrick::Point3d(vector.x, vector.y, vector.z);
 }
 
@@ -46,21 +46,25 @@ Utils::MeshLoader::load(const std::string &path) const {
   if (scene == nullptr)
     return {};
 
-  auto obj_intensity = get_obj_intensity_from_material(scene->mMaterials[0]);
-  auto tri_mesh = new Graphite::Object::TriMesh(
-      obj_intensity.get_shineness(), obj_intensity.get_ambient_intensity(),
-      obj_intensity.get_specular_intensity(),
-      obj_intensity.get_diffuse_intensity());
+  auto tri_mesh = new Graphite::Object::TriMesh();
+
+  std::vector<std::shared_ptr<Graphite::Object::ObjectIntensity>> materials;
+  for (size_t i = 0; i < scene->mNumMaterials; i++) {
+    auto material = std::make_shared<Graphite::Object::ObjectIntensity>(
+        get_obj_intensity_from_material(scene->mMaterials[i]));
+    materials.push_back(material);
+  }
 
   for (size_t i = 0; i < scene->mNumMeshes; i++) {
     auto mesh = scene->mMeshes[i];
+    auto material = materials[mesh->mMaterialIndex];
 
     for (size_t j = 0; j < mesh->mNumFaces; j++) {
       auto face = mesh->mFaces[j];
       auto v1 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[0]]);
       auto v2 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[1]]);
       auto v3 = get_point3d_from_aiVector3D(mesh->mVertices[face.mIndices[2]]);
-      tri_mesh->add_face(std::array{v1, v2, v3});
+      tri_mesh->add_face(std::array{v1, v2, v3}, material);
     }
   }
 
