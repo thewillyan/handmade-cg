@@ -94,7 +94,7 @@ public:
   //
   // The points should be passed only in counterclockwise or clockwise, but
   // never both in the same populated datastructure.
-  void add_face(Algebrick::Point3d points[3]);
+  void add_face(std::array<Algebrick::Point3d, 3>);
 
   // Get each face plane as a `TriangularPlane`.
   std::vector<TriangularPlane> face_planes(double shiness, Light::Intensity env,

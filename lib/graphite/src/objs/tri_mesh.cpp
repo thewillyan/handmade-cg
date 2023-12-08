@@ -4,6 +4,7 @@
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/triangular_plane.hpp"
+#include <array>
 #include <cmath>
 #include <utility>
 
@@ -57,7 +58,7 @@ TriMesh::TriMesh(double shiness, Light::Intensity dif, Light::Intensity spec,
                  Light::Intensity env)
     : intensity{shiness, env, spec, dif} {}
 
-void TriMesh::add_face(Algebrick::Point3d points[3]) {
+void TriMesh::add_face(std::array<Algebrick::Point3d, 3> points) {
   // v0
   // | \
   // |f \
