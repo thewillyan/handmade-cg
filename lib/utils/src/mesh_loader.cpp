@@ -26,11 +26,13 @@ Utils::MeshLoader::get_obj_intensity_from_material(
   float spec = 1.0f;
   material->Get(AI_MATKEY_SHININESS, spec);
 
-  return Graphite::Object::ObjectIntensity(spec, ka, kd, ks);
+  return Graphite::Object::ObjectIntensity(10, SDL_Color{125, 0, 0, 255},
+                                           {0, 0, 0}, {0, 0, 0});
 };
 
 Algebrick::Point3d
 Utils::MeshLoader::get_point3d_from_aiVector3D(const aiVector3D &vector) const {
+  std::cout << vector.x << ',' << vector.y << ',' << vector.z << std::endl;
   return Algebrick::Point3d(vector.x, vector.y, vector.z);
 }
 

@@ -5,6 +5,7 @@
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/triangular_plane.hpp"
+#include <array>
 #include <vector>
 
 namespace Graphite::Object {
