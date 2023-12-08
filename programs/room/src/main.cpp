@@ -22,7 +22,7 @@ int main() {
   double canvas_dist = 30;
 
   // create wall
-  SDL_Surface *img = IMG_Load("../../../textures/mine.png");
+  SDL_Surface *img = IMG_Load("../textures/mine.png");
   auto *t = new Graphite::Texture(img);
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
