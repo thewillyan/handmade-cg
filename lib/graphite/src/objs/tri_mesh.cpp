@@ -157,9 +157,11 @@ std::optional<RayLenObj> TriMesh::intersect(const Algebrick::Ray &ray) const {
     HalfEdge *e = f->get_edge();
     curr_point = 0;
     do {
-      pbuff[curr_point++] = e->get_origin()->get_point();
+      pbuff[curr_point] = e->get_origin()->get_point();
+      ++curr_point;
       e = e->get_next();
     } while (e != f->get_edge());
+
     // TODO: stop leaking memory.
     auto t = new TriangularPlane{pbuff[0],
                                  pbuff[1],
@@ -214,5 +216,4 @@ void TriMesh::transform(const Algebrick::Matrix &matrix) {
     Algebrick::Matrix new_p = matrix * p_matrix;
     p = {new_p.get(0, 0), new_p.get(1, 0), new_p.get(2, 0)};
   }
-  printf("here\n");
 }
