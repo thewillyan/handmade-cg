@@ -212,4 +212,5 @@ void TriMesh::transform(const Algebrick::Matrix &matrix) {
     Algebrick::Matrix new_p = matrix * p_matrix;
     p = {new_p.get(0, 0), new_p.get(1, 0), new_p.get(2, 0)};
   }
+  printf("here\n");
 }
