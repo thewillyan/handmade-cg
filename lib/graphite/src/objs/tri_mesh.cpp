@@ -6,6 +6,7 @@
 #include "graphite/include/objs/triangular_plane.hpp"
 #include <array>
 #include <cmath>
+#include <memory>
 #include <utility>
 
 using namespace Graphite::Object;
@@ -48,15 +49,21 @@ void HalfEdge::set_next(HalfEdge *n) { next = n; }
 void HalfEdge::set_twin(HalfEdge *t) { twin = t; }
 
 Face::Face() : head{nullptr} {}
-Face::Face(HalfEdge &e) : head{&e} {}
+Face::Face(HalfEdge &e, std::shared_ptr<ObjectIntensity> intensity)
+    : head{&e}, intensity(intensity) {}
 HalfEdge *Face::get_edge() { return head; }
+std::shared_ptr<ObjectIntensity> Face::get_intensity() const {
+  return intensity;
+}
 
 TriMesh::TriMesh() {}
+
 TriMesh::TriMesh(double shiness, Light::Intensity dif, Light::Intensity spec,
                  Light::Intensity env)
-    : intensity{shiness, env, spec, dif} {}
+    : default_intensity{shiness, env, spec, dif} {}
 
-void TriMesh::add_face(std::array<Algebrick::Point3d, 3> points) {
+void TriMesh::add_face(std::array<Algebrick::Point3d, 3> points,
+                       std::shared_ptr<ObjectIntensity> obj_int) {
   // v0
   // | \
   // |f \
@@ -119,7 +126,7 @@ void TriMesh::add_face(std::array<Algebrick::Point3d, 3> points) {
     vers[i]->set_edge(edges[i]);
   }
   // bind face to the edges
-  Face *f = new Face(*edges[0]);
+  Face *f = new Face(*edges[0], obj_int);
   for (HalfEdge *edge : edges) {
     edge->set_face(f);
   }
@@ -162,19 +169,14 @@ std::optional<RayLenObj> TriMesh::intersect(const Algebrick::Ray &ray) const {
       e = e->get_next();
     } while (e != f->get_edge());
 
-    // TODO: stop leaking memory.
-    auto t = new TriangularPlane{pbuff[0],
-                                 pbuff[1],
-                                 pbuff[2],
-                                 intensity.get_shineness(),
-                                 intensity.get_ambient_intensity(),
-                                 intensity.get_specular_intensity(),
-                                 intensity.get_diffuse_intensity()};
+    auto intensity = f->get_intensity();
+    auto t = std::make_shared<TriangularPlane>(
+        pbuff[0], pbuff[1], pbuff[2], intensity->get_shineness(),
+        intensity->get_ambient_intensity(), intensity->get_specular_intensity(),
+        intensity->get_diffuse_intensity());
     auto intersect = t->intersect(ray);
 
     if (intersect.has_value()) {
-      // TODO: Pode dar pau aqui pq a gente cria o plane nessa parte e ele pode
-      // morrer nesse escopo
       double curr_t = intersect->first;
       if (curr_t < min_t) {
         min_t = curr_t;
@@ -194,7 +196,7 @@ TriMesh::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 // getters
 ObjectIntensity
 TriMesh::get_intensity([[maybe_unused]] const Algebrick::Point3d &p) const {
-  return intensity;
+  return default_intensity;
 }
 // transformations
 void TriMesh::translate(const Algebrick::Vec3d &offset) {
