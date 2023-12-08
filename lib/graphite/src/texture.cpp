@@ -1,6 +1,7 @@
 #include "graphite/include/texture.hpp"
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_stdinc.h>
+#include <cmath>
 
 using namespace Graphite;
 
@@ -27,7 +28,8 @@ SDL_Color Texture::get_color(const int i, const int j) {
     // TODO: all this.
     break;
   case TextureMode::Repeat:
-    color = get_pixel_color(surface, i % surface->h, j % surface->w);
+    color = get_pixel_color(surface, std::abs(i) % surface->h,
+                            std::abs(j) % surface->w);
   }
   return color;
 }
