@@ -8,6 +8,7 @@
 #include <SDL2/SDL_pixels.h>
 #include <cmath>
 #include <initializer_list>
+#include <iostream>
 #include <optional>
 #include <utility>
 #include <vector>
@@ -15,11 +16,11 @@
 using namespace Graphite;
 
 Space::Space()
-    : objs{std::vector<Object::Object *>()}, ambient_light{1, 1, 1},
-      transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector<Object::Object *>()},
+      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
 Space::Space(std::initializer_list<Object::Object *> lst)
-    : objs{std::vector(lst)}, ambient_light{1, 1, 1},
-      transform{Algebrick::Matrix::identity(4)} {}
+    : objs{std::vector(lst)},
+      ambient_light{1, 1, 1}, transform{Algebrick::Matrix::identity(4)} {}
 Space::~Space() {}
 
 void Space::add_obj(Object::Object *obj) { objs.push_back(obj); }

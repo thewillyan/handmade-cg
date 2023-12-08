@@ -16,10 +16,8 @@ Vertex::Vertex(Algebrick::Point3d p, HalfEdge *e) : point{p}, edge{e} {}
 Algebrick::Point3d &Vertex::get_point() { return point; }
 HalfEdge *Vertex::get_edge() { return edge; }
 
-void Vertex::set_edge(HalfEdge *e) {
-  delete edge;
-  edge = e;
-}
+// TODO: stop leaking memory.
+void Vertex::set_edge(HalfEdge *e) { edge = e; }
 
 HalfEdge::HalfEdge(Vertex &o)
     : origin{&o}, face{new Face()}, next{nullptr}, twin{nullptr} {}
@@ -75,6 +73,7 @@ void TriMesh::add_face(std::array<Algebrick::Point3d, 3> points) {
       vers[2] = v;
     }
   }
+
   // allocate new vertices.
   for (size_t i = 0; i < 3; ++i) {
     if (vers[i] == nullptr) {
@@ -151,7 +150,8 @@ std::vector<TriangularPlane> TriMesh::face_planes(double shiness,
 std::optional<RayLenObj> TriMesh::intersect(const Algebrick::Ray &ray) const {
   double min_t = INFINITY;
   std::optional<RayLenObj> min_p;
-  Algebrick::Point3d pbuff[3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+  std::array<Algebrick::Point3d, 3> pbuff = {
+      Algebrick::Point3d{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   size_t curr_point;
   for (Face *f : faces) {
     HalfEdge *e = f->get_edge();
@@ -159,15 +159,17 @@ std::optional<RayLenObj> TriMesh::intersect(const Algebrick::Ray &ray) const {
     do {
       pbuff[curr_point++] = e->get_origin()->get_point();
       e = e->get_next();
-    } while (e->get_next() != f->get_edge());
-    auto t = TriangularPlane{pbuff[0],
-                             pbuff[1],
-                             pbuff[2],
-                             intensity.get_shineness(),
-                             intensity.get_ambient_intensity(),
-                             intensity.get_specular_intensity(),
-                             intensity.get_diffuse_intensity()};
-    auto intersect = t.intersect(ray);
+    } while (e != f->get_edge());
+    // TODO: stop leaking memory.
+    auto t = new TriangularPlane{pbuff[0],
+                                 pbuff[1],
+                                 pbuff[2],
+                                 intensity.get_shineness(),
+                                 intensity.get_ambient_intensity(),
+                                 intensity.get_specular_intensity(),
+                                 intensity.get_diffuse_intensity()};
+    auto intersect = t->intersect(ray);
+
     if (intersect.has_value()) {
       // TODO: Pode dar pau aqui pq a gente cria o plane nessa parte e ele pode
       // morrer nesse escopo
