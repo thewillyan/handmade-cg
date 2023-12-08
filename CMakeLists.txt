@@ -15,7 +15,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS "lib/*.hpp" "lib/*.cpp" )
 
 include_directories(${CMAKE_SOURCE_DIR}/lib/)
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
 
 add_library(CommonLib
     ${LIB_SOURCES}
@@ -24,7 +23,7 @@ add_library(CommonLib
 function(add_executable_custom _target _sources)
     add_executable(${_target} ${_sources})
 
-    target_link_libraries(${_target} CommonLib SDL2::SDL2 ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(${_target} CommonLib SDL2::SDL2 SDL2_image::SDL2_image)
 
     add_custom_target(run_${_target}
         COMMAND ./${_target}
