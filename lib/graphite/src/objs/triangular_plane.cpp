@@ -66,7 +66,6 @@ TriangularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 // getters
 ObjectIntensity TriangularPlane::get_intensity(
     [[maybe_unused]] const Algebrick::Point3d &p) const {
-  std::cout << p0 << '|' << p1 << '|' << p2 << std::endl;
   return intensity;
 }
 void TriangularPlane::translate(const Algebrick::Vec3d &offset) {
