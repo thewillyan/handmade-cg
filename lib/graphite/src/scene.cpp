@@ -55,6 +55,7 @@ void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
 void Scene::set_render_mode(const RenderMode m) { mode = m; }
 void Scene::set_eye_pov(FrameRef &&pov) { eye_pov = pov; }
+void Scene::set_oblique_dir(const Algebrick::Vec3d &vec) { oblique_dir = vec; }
 
 void Scene::render(Canvas &c, double d) const {
   const double pov_w = c.get_pov_width();

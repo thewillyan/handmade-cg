@@ -5,6 +5,8 @@
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/triangular_plane.hpp"
+#include <array>
+#include <memory>
 #include <vector>
 
 namespace Graphite::Object {
@@ -63,15 +65,17 @@ public:
 class Face {
 private:
   HalfEdge *head;
+  std::shared_ptr<ObjectIntensity> intensity;
 
 public:
   // creates an "null" face.
   Face();
   // creates an face with the given edge as its head.
-  Face(HalfEdge &e);
+  explicit Face(HalfEdge &e, std::shared_ptr<ObjectIntensity> intensity);
 
   // gets the head edge
   HalfEdge *get_edge();
+  std::shared_ptr<ObjectIntensity> get_intensity() const;
 };
 
 class TriMesh : public Object {
@@ -83,7 +87,7 @@ private:
   // `TriangularPlane` so only three points faces can be used without
   // pre-process the faces vector.
   std::vector<Face *> faces;
-  ObjectIntensity intensity;
+  ObjectIntensity default_intensity;
 
 public:
   TriMesh();
@@ -94,7 +98,8 @@ public:
   //
   // The points should be passed only in counterclockwise or clockwise, but
   // never both in the same populated datastructure.
-  void add_face(Algebrick::Point3d points[3]);
+  void add_face(std::array<Algebrick::Point3d, 3>,
+                std::shared_ptr<ObjectIntensity> intensity);
 
   // Get each face plane as a `TriangularPlane`.
   std::vector<TriangularPlane> face_planes(double shiness, Light::Intensity env,

@@ -5,6 +5,8 @@ find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 find_package(SDL2_image REQUIRED)
 
+find_package(assimp REQUIRED)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bins)
@@ -23,7 +25,7 @@ add_library(CommonLib
 function(add_executable_custom _target _sources)
     add_executable(${_target} ${_sources})
 
-    target_link_libraries(${_target} CommonLib SDL2::SDL2 SDL2_image::SDL2_image)
+    target_link_libraries(${_target} CommonLib SDL2::SDL2 SDL2_image::SDL2_image assimp)
 
     add_custom_target(run_${_target}
         COMMAND ./${_target}
@@ -39,3 +41,4 @@ add_executable_custom(sphere_test programs/sphere_test/src/main.cpp)
 add_executable_custom(ball_plane programs/ball_plane/src/main.cpp)
 add_executable_custom(semi-snow programs/semi-snow/src/main.cpp)
 add_executable_custom(room programs/room/src/main.cpp)
+add_executable_custom(load_mesh programs/load_mesh/src/main.cpp)
