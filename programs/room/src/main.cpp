@@ -48,7 +48,7 @@ int main() {
   // create space
   auto objs = Graphite::Space();
   objs.add_obj(wall);
-  // objs.add_light(spotlight);
+  objs.add_light(spotlight);
   objs.add_light(directed);
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
