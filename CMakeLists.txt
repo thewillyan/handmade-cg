@@ -42,3 +42,10 @@ add_executable_custom(ball_plane programs/ball_plane/src/main.cpp)
 add_executable_custom(semi-snow programs/semi-snow/src/main.cpp)
 add_executable_custom(room programs/room/src/main.cpp)
 add_executable_custom(load_mesh programs/load_mesh/src/main.cpp)
+add_executable_custom(
+  final_scene 
+  programs/final_scene/src/main.cpp
+  programs/final_scene/src/room.cpp
+  programs/final_scene/src/lights.cpp
+  programs/final_scene/src/objects.cpp
+)
