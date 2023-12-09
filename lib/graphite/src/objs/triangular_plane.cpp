@@ -2,42 +2,41 @@
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
-#include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 
 using namespace Graphite::Object;
 
-TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
-                                 Algebrick::Point3d p2)
-    : p0{p0}, p1{p1}, p2{p2} {
-  Algebrick::Vec3d r1 = p1 - p0;
-  Algebrick::Vec3d r2 = p2 - p0;
+TriangularPlane::TriangularPlane(
+    std::array<std::shared_ptr<Algebrick::Point3d>, 3> ps)
+    : points{ps} {
+  Algebrick::Vec3d r1 = *points[1] - *points[0];
+  Algebrick::Vec3d r2 = *points[2] - *points[0];
   norm = r1.cross(r2).norm();
 }
 
-TriangularPlane::TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
-                                 Algebrick::Point3d p2, double shiness,
-                                 Light::Intensity env, Light::Intensity espec,
-                                 Light::Intensity diff)
-    : p0{p0}, p1{p1}, p2{p2}, intensity{shiness, env, espec, diff} {
-  Algebrick::Vec3d r1 = p1 - p0;
-  Algebrick::Vec3d r2 = p2 - p0;
+TriangularPlane::TriangularPlane(
+    std::array<std::shared_ptr<Algebrick::Point3d>, 3> ps,
+    std::shared_ptr<ObjectIntensity> i)
+    : points{ps}, intensity{i} {
+  Algebrick::Vec3d r1 = *points[1] - *points[0];
+  Algebrick::Vec3d r2 = *points[2] - *points[0];
   norm = r1.cross(r2).norm();
 }
 
 std::optional<RayLenObj>
 TriangularPlane::intersect(const Algebrick::Ray &ray) const {
-  double k = -((ray.source() - p0) * norm) / (ray.direction() * norm);
+  double k = -((ray.source() - *points[0]) * norm) / (ray.direction() * norm);
   if (k < 0) {
     return {};
   }
 
   Algebrick::Point3d p_int = ray.source() + (ray.direction() * k);
 
-  Algebrick::Vec3d r1 = p1 - p0;
-  Algebrick::Vec3d r2 = p2 - p0;
-  Algebrick::Vec3d v = p_int - p0;
+  Algebrick::Vec3d r1 = *points[1] - *points[0];
+  Algebrick::Vec3d r2 = *points[2] - *points[0];
+  Algebrick::Vec3d v = p_int - *points[0];
   double denom = r1.cross(r2) * norm;
 
   double c1 = (v.cross(r2) * norm) / denom;
@@ -66,12 +65,12 @@ TriangularPlane::normal([[maybe_unused]] const Algebrick::Point3d &p) const {
 // getters
 ObjectIntensity TriangularPlane::get_intensity(
     [[maybe_unused]] const Algebrick::Point3d &p) const {
-  return intensity;
+  return *intensity;
 }
 void TriangularPlane::translate(const Algebrick::Vec3d &offset) {
-  p0 += offset;
-  p1 += offset;
-  p2 += offset;
+  for (std::shared_ptr<Algebrick::Point3d> &p : points) {
+    *p += offset;
+  }
 }
 void TriangularPlane::scale(double k) {
   if (k <= 0) {
@@ -80,11 +79,12 @@ void TriangularPlane::scale(double k) {
     k = -(1.0 / k);
   }
 
-  Algebrick::Point3d center = {(p0.x + p1.x + p2.x) / 3,
-                               (p0.y + p1.y + p2.y) / 3,
-                               (p0.z + p1.z + p2.z) / 3};
+  Algebrick::Point3d center = {(points[0]->x + points[1]->x + points[2]->x) / 3,
+                               (points[0]->y + points[1]->y + points[2]->y) / 3,
+                               (points[0]->z + points[1]->z + points[2]->z) /
+                                   3};
 
-  for (Algebrick::Point3d *p_ptr : {&p0, &p1, &p2}) {
+  for (std::shared_ptr<Algebrick::Point3d> p_ptr : points) {
     // distance to the center of the triangle.
     Algebrick::Vec3d distc = (*p_ptr - center);
     Algebrick::Vec3d offset = distc.norm() * k;
@@ -92,17 +92,25 @@ void TriangularPlane::scale(double k) {
   }
 }
 void TriangularPlane::transform(const Algebrick::Matrix &matrix) {
-  Algebrick::Matrix new_p0 = matrix * Algebrick::Matrix{{p0.x, p0.y, p0.z, 1}};
-  Algebrick::Matrix new_p1 = matrix * Algebrick::Matrix{{p1.x, p1.y, p1.z, 1}};
-  Algebrick::Matrix new_p2 = matrix * Algebrick::Matrix{{p2.x, p2.y, p2.z, 1}};
+  Algebrick::Matrix points_matrix = {{points[0]->x, points[1]->x, points[2]->x},
+                                     {points[0]->y, points[1]->y, points[2]->y},
+                                     {points[0]->z, points[1]->z, points[2]->z},
+                                     {1, 1, 1}};
 
-  p0 = {new_p0.get(0, 0), new_p0.get(1, 0), new_p0.get(2, 0)};
-  p1 = {new_p1.get(0, 0), new_p1.get(1, 0), new_p1.get(2, 0)};
-  p2 = {new_p2.get(0, 0), new_p2.get(1, 0), new_p2.get(2, 0)};
+  Algebrick::Matrix new_points = matrix * points_matrix;
+  *points[0] = {new_points.get(0, 0), new_points.get(1, 0),
+                new_points.get(2, 0)};
+  *points[1] = {new_points.get(0, 1), new_points.get(1, 1),
+                new_points.get(2, 1)};
+  *points[2] = {new_points.get(0, 2), new_points.get(1, 2),
+                new_points.get(2, 2)};
+  transform_norm(matrix);
+}
 
-  Algebrick::Matrix new_norm =
-      matrix * Algebrick::Matrix{{norm.x, norm.y, norm.z}};
-  norm = Algebrick::Vec3d{new_norm.get(0, 0), new_norm.get(1, 0),
-                          new_norm.get(2, 0)}
-             .norm();
+void TriangularPlane::transform_norm(const Algebrick::Matrix &matrix) {
+  Algebrick::Matrix transf_norm =
+      matrix * Algebrick::Matrix{{norm.x}, {norm.y}, {norm.z}, {0}};
+  Algebrick::Vec3d new_norm = Algebrick::Vec3d{
+      transf_norm.get(0, 0), transf_norm.get(1, 0), transf_norm.get(2, 0)};
+  norm = new_norm.norm();
 }
