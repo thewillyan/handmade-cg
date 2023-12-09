@@ -8,7 +8,6 @@
 #include <SDL2/SDL_pixels.h>
 #include <cmath>
 #include <initializer_list>
-#include <iostream>
 #include <optional>
 #include <utility>
 #include <vector>

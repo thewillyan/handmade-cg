@@ -5,7 +5,6 @@
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/triangular_plane.hpp"
-#include <algorithm>
 #include <array>
 #include <memory>
 #include <vector>

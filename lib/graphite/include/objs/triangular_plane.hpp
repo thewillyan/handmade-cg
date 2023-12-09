@@ -3,26 +3,23 @@
 
 #include "algebrick/include/point3d.hpp"
 #include "algebrick/include/vec3d.hpp"
-#include "graphite/include/intensity.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
+#include <array>
+#include <memory>
 
 namespace Graphite::Object {
 
 class TriangularPlane : public Object {
 private:
-  Algebrick::Point3d p0;
-  Algebrick::Point3d p1;
-  Algebrick::Point3d p2;
+  std::array<std::shared_ptr<Algebrick::Point3d>, 3> points;
   Algebrick::Vec3d norm;
-  ObjectIntensity intensity;
+  std::shared_ptr<ObjectIntensity> intensity;
 
 public:
-  TriangularPlane(Algebrick::Point3d p0, Algebrick::Point3d p1,
-                  Algebrick::Point3d p2);
-  TriangularPlane(Algebrick::Point3d, Algebrick::Point3d, Algebrick::Point3d,
-                  double shiness, Light::Intensity env, Light::Intensity espec,
-                  Light::Intensity diff);
+  TriangularPlane(std::array<std::shared_ptr<Algebrick::Point3d>, 3>);
+  TriangularPlane(std::array<std::shared_ptr<Algebrick::Point3d>, 3>,
+                  std::shared_ptr<ObjectIntensity>);
 
   std::optional<RayLenObj> intersect(const Algebrick::Ray &ray) const override;
 
@@ -36,6 +33,9 @@ public:
 
   // getters
   ObjectIntensity get_intensity(const Algebrick::Point3d &) const override;
+
+  // others
+  void transform_norm(const Algebrick::Matrix &matrix);
 };
 
 } // namespace Graphite::Object

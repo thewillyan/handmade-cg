@@ -19,22 +19,23 @@ int main() {
   auto canvas = Graphite::Canvas(WIN_WIDTH, WIN_HEIGHT);
   double canvas_dist = 5;
 
-  auto mesh = new Graphite::Object::TriMesh(0.5, SDL_Color{125, 0, 0, 255},
-                                            SDL_Color{125, 0, 0, 255},
-                                            SDL_Color{125, 0, 0, 255});
-  mesh->add_face({Algebrick::Point3d{-50, 50, -4000},
-                  Algebrick::Point3d{50, -50, -4000},
-                  Algebrick::Point3d{-50, -50, -4000}});
+  // auto mesh = new Graphite::Object::TriMesh(0.5, SDL_Color{125, 0, 0, 255},
+  //                                           SDL_Color{125, 0, 0, 255},
+  //                                           SDL_Color{125, 0, 0, 255});
+  // mesh->add_face({Algebrick::Point3d{-50, 50, -4000},
+  //                 Algebrick::Point3d{50, -50, -4000},
+  //                 Algebrick::Point3d{-50, -50, -4000}});
 
   // mesh->add_face({Algebrick::Point3d{-50, 50, -4000},
   //                 Algebrick::Point3d{50, 50, -4000},
   //                 Algebrick::Point3d{50, -50, -4000}});
   // auto face_planes = mesh->face_planes(1, {1, 1, 1}, {1, 1, 1}, {1, 1, 1});
-  // auto mesh_loader = Utils::MeshLoader();
-  // auto mesh = mesh_loader.load(
-  //     "../models/"
-  //     "Straight_Leg_Rectangular_Table_White_V1_f9f400f7-b663-472c-b38f-"
-  //     "c35f0185efe2/Straight_Leg_Rectangular_Table_V1.obj");
+  auto mesh_loader = Utils::MeshLoader();
+  auto mesh = mesh_loader.load(
+      "../models/"
+      "Straight_Leg_Rectangular_Table_White_V1_f9f400f7-b663-472c-b38f-"
+      "c35f0185efe2/Straight_Leg_Rectangular_Table_V1.obj");
+  mesh->rotate_x(-M_PI / 2.0);
   // auto mesh = mesh_loader.load(
   //     "models/"
   //     "Straight_Leg_Rectangular_Table_White_V1_f9f400f7-b663-472c-b38f-"
@@ -59,6 +60,7 @@ int main() {
   objs.add_light(light);
   objs.add_obj(mesh);
   auto scene = Graphite::Scene(&objs);
+  scene.set_eye_pov(Graphite::FrameRef{{0, 0, 100}, {0, 200, 100}, {0, 0, 0}});
   scene.set_bg_color({255, 255, 255, 255});
 
   // // render

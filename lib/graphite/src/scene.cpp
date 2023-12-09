@@ -6,7 +6,6 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <cstddef>
-#include <iostream>
 #include <optional>
 
 using namespace Graphite;

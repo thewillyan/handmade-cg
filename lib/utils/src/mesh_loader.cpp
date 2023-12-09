@@ -1,7 +1,7 @@
 #include "utils/include/mesh_loader.hpp"
 #include "array"
 #include "graphite/include/objs/obj_intensity.hpp"
-#include "graphite/include/objs/tri_mesh.hpp"
+#include "graphite/include/objs/tri_list.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/material.h>
 #include <assimp/postprocess.h>
@@ -36,7 +36,7 @@ Utils::MeshLoader::get_point3d_from_aiVector3D(const aiVector3D &vector) const {
   return Algebrick::Point3d(vector.x, vector.y, vector.z);
 }
 
-Graphite::Object::TriMesh *
+Graphite::Object::TriList *
 Utils::MeshLoader::load(const std::string &path) const {
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(
@@ -46,7 +46,7 @@ Utils::MeshLoader::load(const std::string &path) const {
   if (scene == nullptr)
     return {};
 
-  auto tri_mesh = new Graphite::Object::TriMesh();
+  auto tri_mesh = new Graphite::Object::TriList();
 
   std::vector<std::shared_ptr<Graphite::Object::ObjectIntensity>> materials;
   for (size_t i = 0; i < scene->mNumMaterials; i++) {

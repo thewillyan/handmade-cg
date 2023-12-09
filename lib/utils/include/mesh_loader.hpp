@@ -1,6 +1,6 @@
 #include "algebrick/include/point3d.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
-#include "graphite/include/objs/tri_mesh.hpp"
+#include "graphite/include/objs/tri_list.hpp"
 #include <assimp/material.h>
 #include <string>
 
@@ -17,7 +17,7 @@ public:
 
   Algebrick::Point3d get_point3d_from_aiVector3D(const aiVector3D &) const;
 
-  Graphite::Object::TriMesh *load(const std::string &path) const;
+  Graphite::Object::TriList *load(const std::string &path) const;
 };
 }; // namespace Utils
 
