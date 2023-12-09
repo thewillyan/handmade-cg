@@ -170,12 +170,13 @@ Matrix Matrix::operator*(const Vec3d &other) const {
   return mul_mat;
 }
 
-Matrix Matrix::mul(Matrix &other) {
+Matrix Matrix::mul(const Matrix &other) const {
   if (n != other.get_lines())
     throw std::out_of_range("The number of columns of the first matrix is \
         not equal to the number of lines of the second one.");
+
   Matrix mul_mat = Matrix(m, other.get_cols());
-  cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, other.get_cols(), n,
+  cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, other.get_cols(), n,
               1.0, elems.data(), n, other.elems.data(), other.get_cols(), 0.0,
               mul_mat.elems.data(), other.get_cols());
   return mul_mat;
