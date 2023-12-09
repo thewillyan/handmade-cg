@@ -50,12 +50,16 @@ void CircularPlane::translate(const Algebrick::Vec3d &offset) {
 }
 void CircularPlane::scale(double k) { radius *= k; }
 void CircularPlane::transform(const Algebrick::Matrix &matrix) {
-  Algebrick::Matrix center_4d = {{center.x}, {center.y}, {center.z}, {1}};
-  Algebrick::Matrix new_center = matrix * center_4d;
-  center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
-
-  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {0}};
-  Algebrick::Matrix new_norm = matrix * norm_4d;
-  norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
-  norm = norm.norm();
+  Algebrick::Matrix to_transform = {
+      {center.x, norm.x},
+      {center.y, norm.y},
+      {center.z, norm.z},
+      {1.0, 0.0},
+  };
+  Algebrick::Matrix transformed = matrix.mul(to_transform);
+  center = Algebrick::Point3d{transformed.get(0, 0), transformed.get(1, 0),
+                              transformed.get(2, 0)};
+  norm = Algebrick::Vec3d{transformed.get(0, 1), transformed.get(1, 1),
+                          transformed.get(2, 1)}
+             .norm();
 }

@@ -63,6 +63,6 @@ void Sphere::translate(const Algebrick::Vec3d &offset) { center += offset; }
 void Sphere::scale(double k) { radius *= k; }
 void Sphere::transform(const Algebrick::Matrix &matrix) {
   Algebrick::Matrix center_4d = {{center.x}, {center.y}, {center.z}, {1.0}};
-  Algebrick::Matrix new_center = matrix * center_4d;
+  Algebrick::Matrix new_center = matrix.mul(center_4d);
   center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
 }

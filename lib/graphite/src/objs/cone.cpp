@@ -22,8 +22,8 @@ Cone::Cone(double h, double r, Algebrick::Point3d base_center,
            Algebrick::Vec3d n, double shiness, Light::Intensity env,
            Light::Intensity esp, Light::Intensity dif)
     : radius{r}, height{h}, aperture{0.2}, norm{n.norm()}, center{base_center},
-      top{base_center + n.norm() * h},
-      base{base_center, r, -n.norm(), env, esp, dif, shiness},
+      top{base_center + n.norm() * h}, base{base_center, r,   -n.norm(), env,
+                                            esp,         dif, shiness},
       intensity{shiness, env, esp, dif} {}
 
 std::optional<RayLenObj> Cone::intersect(const Algebrick::Ray &ray) const {
@@ -117,19 +117,22 @@ void Cone::translate(const Algebrick::Vec3d &offset) {
 }
 
 void Cone::transform(const Algebrick::Matrix &matrix) {
-  Algebrick::Matrix center_4d = {{center.x}, {center.y}, {center.z}, {1}};
-  Algebrick::Matrix new_center = matrix * center_4d;
-  center = {new_center.get(0, 0), new_center.get(1, 0), new_center.get(2, 0)};
+  Algebrick::Matrix to_transform = {
+      {center.x, top.x, norm.x},
+      {center.y, top.y, norm.y},
+      {center.z, top.z, norm.z},
+      {1, 1, 0},
+  };
 
-  Algebrick::Matrix top_4d = {{top.x}, {top.y}, {top.z}, {1}};
-  Algebrick::Matrix new_top = matrix * top_4d;
-  top = {new_top.get(0, 0), new_top.get(1, 0), new_top.get(2, 0)};
+  Algebrick::Matrix transformed = matrix.mul(to_transform);
 
-  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {0}};
-  Algebrick::Matrix new_norm = matrix * norm_4d;
-  norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
-  norm = norm.norm();
-
+  center = Algebrick::Point3d{transformed.get(0, 0), transformed.get(1, 0),
+                              transformed.get(2, 0)};
+  top = Algebrick::Point3d{transformed.get(0, 1), transformed.get(1, 1),
+                           transformed.get(2, 1)};
+  norm = Algebrick::Vec3d{transformed.get(0, 2), transformed.get(1, 2),
+                          transformed.get(2, 2)}
+             .norm();
   base.transform(matrix);
 }
 

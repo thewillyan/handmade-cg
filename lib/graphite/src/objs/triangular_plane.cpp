@@ -97,7 +97,7 @@ void TriangularPlane::transform(const Algebrick::Matrix &matrix) {
                                      {points[0]->z, points[1]->z, points[2]->z},
                                      {1, 1, 1}};
 
-  Algebrick::Matrix new_points = matrix * points_matrix;
+  Algebrick::Matrix new_points = matrix.mul(points_matrix);
   *points[0] = {new_points.get(0, 0), new_points.get(1, 0),
                 new_points.get(2, 0)};
   *points[1] = {new_points.get(0, 1), new_points.get(1, 1),
@@ -109,7 +109,7 @@ void TriangularPlane::transform(const Algebrick::Matrix &matrix) {
 
 void TriangularPlane::transform_norm(const Algebrick::Matrix &matrix) {
   Algebrick::Matrix transf_norm =
-      matrix * Algebrick::Matrix{{norm.x}, {norm.y}, {norm.z}, {0}};
+      matrix.mul(Algebrick::Matrix{{norm.x}, {norm.y}, {norm.z}, {0}});
   Algebrick::Vec3d new_norm = Algebrick::Vec3d{
       transf_norm.get(0, 0), transf_norm.get(1, 0), transf_norm.get(2, 0)};
   norm = new_norm.norm();
