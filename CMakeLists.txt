@@ -4,6 +4,8 @@ project(handmade-cg VERSION 0.1 LANGUAGES CXX)
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 find_package(SDL2_image REQUIRED)
+find_package(BLAS REQUIRED)
+
 
 find_package(assimp REQUIRED)
 
@@ -25,7 +27,7 @@ add_library(CommonLib
 function(add_executable_custom _target _sources)
     add_executable(${_target} ${_sources})
 
-    target_link_libraries(${_target} CommonLib SDL2::SDL2 SDL2_image::SDL2_image assimp)
+    target_link_libraries(${_target} CommonLib SDL2::SDL2 SDL2_image::SDL2_image assimp BLAS::BLAS)
 
     add_custom_target(run_${_target}
         COMMAND ./${_target}
