@@ -1,3 +1,4 @@
+#include "algebrick/include/point3d.hpp"
 #include "graphite/include/objs/cilinder.hpp"
 #include "graphite/include/objs/cone.hpp"
 #include "graphite/include/objs/object.hpp"
@@ -37,9 +38,36 @@ void get_santa_tree(std::vector<Graphite::Object::Object *> *objects) {
   objects->push_back(cylinder);
 }
 
+void add_pub_chair(const Algebrick::Point3d &pos,
+                   std::vector<Graphite::Object::Object *> *objects) {
+  double seat_radius = 30;
+  double seat_height = 10;
+  double seat_y = -100;
+  Graphite::Light::Intensity seat_k{0.212, 0.176, 0.176};
+  Algebrick::Point3d seat_center = {pos.x, seat_y, pos.z};
+  Algebrick::Vec3d seat_dir = {0, 1, 0};
+  double shininess = 10;
+  auto seat = new Graphite::Object::Cilinder(seat_center, seat_dir, seat_radius,
+                                             seat_height, shininess, seat_k,
+                                             seat_k, seat_k);
+  objects->push_back(seat);
+
+  double support_radius = 5;
+  double support_height = 100;
+  Graphite::Light::Intensity support_k{0.82, 0.82, 0.82};
+  Algebrick::Point3d support_center = {pos.x, seat_y - 100, pos.z};
+  auto support = new Graphite::Object::Cilinder(
+      support_center, seat_dir, support_radius, support_height, shininess,
+      support_k, support_k, support_k);
+  objects->push_back(support);
+}
+
 std::vector<Graphite::Object::Object *> get_objects() {
 
   std::vector<Graphite::Object::Object *> objects;
   get_santa_tree(&objects);
+  add_pub_chair({-100, 0, 100}, &objects);
+  add_pub_chair({-100, 0, 170}, &objects);
+  add_pub_chair({-100, 0, 30}, &objects);
   return objects;
 }
