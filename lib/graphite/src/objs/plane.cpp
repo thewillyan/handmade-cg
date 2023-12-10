@@ -36,7 +36,7 @@ std::pair<Algebrick::Vec3d, Algebrick::Vec3d> get_axis(Algebrick::Vec3d &norm) {
 }
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s)
-    : point{p}, norm{n}, color{c} {
+    : point{p}, norm{n}, color{c}, texture{nullptr} {
   auto axis = get_axis(norm);
   paxis_x = axis.first;
   paxis_y = axis.second;
@@ -45,7 +45,7 @@ Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s)
 
 Plane::Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s,
              Light::Intensity d, Light::Intensity e, Light::Intensity en)
-    : point{p}, norm{n}, color{c}, intensity{s, en, e, d} {
+    : point{p}, norm{n}, color{c}, intensity{s, en, e, d}, texture{nullptr} {
   auto axis = get_axis(norm);
   paxis_x = axis.first;
   paxis_y = axis.second;
