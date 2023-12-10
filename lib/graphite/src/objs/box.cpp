@@ -1,4 +1,4 @@
-#include "graphite/include/objs/cube.hpp"
+#include "graphite/include/objs/box.hpp"
 #include "algebrick/include/point3d.hpp"
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/tri_list.hpp"
