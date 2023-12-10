@@ -35,6 +35,9 @@ public:
 
   Matrix operator*(const Matrix &) const;
   Matrix operator*(const Vec3d &) const;
+
+  // fast matrix multiplication
+  Matrix mul(const Matrix &) const;
 };
 } // namespace Algebrick
 

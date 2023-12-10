@@ -11,8 +11,9 @@ Cilinder::Cilinder(const Algebrick::Point3d &base_center,
                    const Algebrick::Vec3d &dir, double radius, double height,
                    double shineness)
     : radius{radius}, height{height}, dir{dir.norm()}, base_center{base_center},
-      base{base_center, radius, dir.norm() * -1},
-      top{base_center + dir.norm() * height, radius, dir.norm()} {
+      base{base_center, radius, dir.norm() * -1}, top{base_center +
+                                                          dir.norm() * height,
+                                                      radius, dir.norm()} {
   intensity.set_shineness(shineness);
 };
 
@@ -127,16 +128,19 @@ void Cilinder::translate(const Algebrick::Vec3d &offset) {
 }
 
 void Cilinder::transform(const Algebrick::Matrix &matrix) {
-  Algebrick::Matrix base_center_4d = {
-      {this->base_center.x}, {this->base_center.y}, {this->base_center.z}, {1}};
-  Algebrick::Matrix new_center = matrix * base_center_4d;
-  base_center = {new_center.get(0, 0), new_center.get(1, 0),
-                 new_center.get(2, 0)};
+  Algebrick::Matrix to_transform = {
+      {this->base_center.x, dir.x},
+      {this->base_center.y, dir.y},
+      {this->base_center.z, dir.z},
+      {1.0, 0.0},
+  };
+  Algebrick::Matrix transformed = matrix.mul(to_transform);
 
-  Algebrick::Matrix dir_4d = {{dir.x}, {dir.y}, {dir.z}, {0}};
-  Algebrick::Matrix new_dir = matrix * dir_4d;
-  dir = {new_dir.get(0, 0), new_dir.get(1, 0), new_dir.get(2, 0)};
-  dir = dir.norm();
+  base_center = Algebrick::Point3d{transformed.get(0, 0), transformed.get(1, 0),
+                                   transformed.get(2, 0)};
+  dir = Algebrick::Vec3d{transformed.get(0, 1), transformed.get(1, 1),
+                         transformed.get(2, 1)}
+            .norm();
 
   base.transform(matrix);
   top.transform(matrix);

@@ -75,12 +75,12 @@ void TriList::transform(const Algebrick::Matrix &matrix) {
     vertex_matrix.get(0, i) = vertex_list[i]->x;
     vertex_matrix.get(1, i) = vertex_list[i]->y;
     vertex_matrix.get(2, i) = vertex_list[i]->z;
-    vertex_matrix.get(3, i) = 1;
+    vertex_matrix.get(3, i) = 1.0;
   }
-  Algebrick::Matrix transf = matrix * vertex_matrix;
+  Algebrick::Matrix transformed = matrix.mul(vertex_matrix);
   for (size_t i = 0; i < vertex_list.size(); ++i) {
-    *vertex_list[i] = {vertex_matrix.get(0, i), vertex_matrix.get(1, i),
-                       vertex_matrix.get(2, i)};
+    *vertex_list[i] = Algebrick::Point3d{
+        transformed.get(0, i), transformed.get(1, i), transformed.get(2, i)};
   }
 
   for (TriangularPlane &f : faces) {

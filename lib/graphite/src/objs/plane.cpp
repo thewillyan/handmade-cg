@@ -86,12 +86,17 @@ void Plane::scale([[maybe_unused]] double k) {
   // This method is empty because a plane is infinite and cannot be scaled.
 }
 void Plane::transform(const Algebrick::Matrix &matrix) {
-  Algebrick::Matrix point_4d = {{point.x}, {point.y}, {point.z}, {1.0}};
-  Algebrick::Matrix new_point = matrix * point_4d;
-  point = {new_point.get(0, 0), new_point.get(1, 0), new_point.get(2, 0)};
+  Algebrick::Matrix to_transform = {
+      {point.x, norm.x},
+      {point.y, norm.y},
+      {point.z, norm.z},
+      {1.0, 0.0},
+  };
+  Algebrick::Matrix transformed = matrix.mul(to_transform);
+  point = Algebrick::Point3d{transformed.get(0, 0), transformed.get(1, 0),
+                             transformed.get(2, 0)};
 
-  Algebrick::Matrix norm_4d = {{norm.x}, {norm.y}, {norm.z}, {0.0}};
-  Algebrick::Matrix new_norm = matrix * norm_4d;
-  norm = {new_norm.get(0, 0), new_norm.get(1, 0), new_norm.get(2, 0)};
-  norm = norm.norm();
+  norm = Algebrick::Vec3d{transformed.get(0, 1), transformed.get(1, 1),
+                          transformed.get(2, 1)}
+             .norm();
 }

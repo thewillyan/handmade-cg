@@ -27,11 +27,19 @@ int main() {
   std::cout << "p - q = " << (p - q) << std::endl;
 
   Algebrick::Matrix m = {{3, 2}, {4, 3}};
-  Algebrick::Matrix inv = Algebrick::Matrix::inv(m) * m;
+  Algebrick::Matrix inv = Algebrick::Matrix::inv(m).mul(m);
   for (size_t i = 0; i < inv.get_lines(); ++i) {
     std::cout << "| ";
     for (size_t j = 0; j < inv.get_cols(); ++j) {
       std::cout << inv.get(i, j) << ' ';
+    }
+    std::cout << "|\n";
+  }
+  std::cout << std::endl;
+  for (size_t i = 0; i < m.get_lines(); ++i) {
+    std::cout << "| ";
+    for (size_t j = 0; j < m.get_cols(); ++j) {
+      std::cout << m.get(i, j) << ' ';
     }
     std::cout << "|\n";
   }
