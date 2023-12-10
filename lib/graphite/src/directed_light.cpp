@@ -25,13 +25,17 @@ Intensity Directed::get_intensity(const Object::Object &inter_obj,
   // check other objects intersections
   double light_length = 0;
   Algebrick::Ray light_ray{inter_point, -direction};
+  auto cont_obj = inter_obj.get_container_obj();
   for (auto &obj : objs) {
-    if (obj != &inter_obj) {
+    if (cont_obj == nullptr && obj != &inter_obj) {
       auto other_inter = obj->intersect(light_ray);
-      if (other_inter.has_value()) {
-        if (other_inter->first >= light_length) {
-          return {0, 0, 0};
-        }
+      if (other_inter.has_value() && other_inter->first >= light_length) {
+        return {0, 0, 0};
+      }
+    } else if (cont_obj != nullptr && obj != cont_obj) {
+      auto other_inter = obj->intersect(light_ray);
+      if (other_inter.has_value() && other_inter->first >= light_length) {
+        return {0, 0, 0};
       }
     }
   }

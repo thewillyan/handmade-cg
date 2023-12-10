@@ -24,13 +24,17 @@ Intensity Point::get_intensity(const Object::Object &inter_obj,
   double ray_len = L.length();
 
   Algebrick::Ray light_ray{p, inter_point};
+  auto cont_obj = inter_obj.get_container_obj();
   for (auto &obj : objs) {
-    if (obj->get_id() != inter_obj.get_id()) {
+    if (cont_obj == nullptr && obj->get_id() != inter_obj.get_id()) {
       auto other_inter = obj->intersect(light_ray);
-      if (other_inter.has_value()) {
-        if (ray_len >= other_inter->first) {
-          return {0, 0, 0};
-        }
+      if (other_inter.has_value() && ray_len >= other_inter->first) {
+        return {0, 0, 0};
+      }
+    } else if (cont_obj != nullptr && obj->get_id() != cont_obj->get_id()) {
+      auto other_inter = obj->intersect(light_ray);
+      if (other_inter.has_value() && ray_len >= other_inter->first) {
+        return {0, 0, 0};
       }
     }
   }
