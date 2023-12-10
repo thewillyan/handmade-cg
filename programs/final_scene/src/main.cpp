@@ -36,7 +36,7 @@ int main() {
 
   auto scene = Graphite::Scene(&objs);
   scene.set_bg_color({255, 255, 255, 255});
-  scene.set_eye_pov({{0, 0, 0}, {0, 100, -2}, {0, 0, -100}});
+  scene.set_eye_pov({{0, 0, 0}, {0, 100, 10}, {0, 0, 100}});
   canvas.zoom_in(1.5);
 
   scene.render(canvas, canvas_dist);
