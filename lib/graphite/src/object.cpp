@@ -33,3 +33,11 @@ void Graphite::Object::Object::rotate_z(double angle) {
 }
 
 void Graphite::Object::Object::set_visible(bool v) { visible = v; };
+
+void Graphite::Object::Object::set_container_obj(Object *obj) {
+  container_obj = obj;
+};
+
+Graphite::Object::Object *Graphite::Object::Object::get_container_obj() const {
+  return container_obj;
+};

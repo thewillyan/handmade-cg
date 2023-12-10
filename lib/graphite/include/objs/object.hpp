@@ -22,6 +22,7 @@ private:
   bool visible;
   unsigned long int id;
   static unsigned long int id_counter;
+  class Object *container_obj = nullptr;
 
 public:
   Object();
@@ -35,6 +36,7 @@ public:
   unsigned long int get_id() const;
   bool is_visible() const;
   virtual ObjectIntensity get_intensity(const Algebrick::Point3d &) const = 0;
+  Object *get_container_obj() const;
 
   // transformations
   virtual void translate(const Algebrick::Vec3d &offset) = 0;
@@ -47,6 +49,7 @@ public:
 
   // setters
   void set_visible(bool v);
+  void set_container_obj(Object *obj);
 };
 
 } // namespace Graphite::Object
