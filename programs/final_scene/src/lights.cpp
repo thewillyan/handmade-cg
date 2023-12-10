@@ -4,7 +4,7 @@
 
 std::vector<Graphite::Light::Source *> get_lights() {
 
-  auto upper = new Graphite::Light::Point({0, 190, 0}, {0.7, 0.7, 0.7});
+  auto upper = new Graphite::Light::Point({0, 190, 100}, {0.7, 0.7, 0.7});
   upper->set_decay(1e-5, 6e-3, 0.1);
 
   std::vector<Graphite::Light::Source *> lights = {upper};
