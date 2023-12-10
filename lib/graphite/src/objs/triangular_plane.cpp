@@ -13,7 +13,7 @@ TriangularPlane::TriangularPlane(
     : points{ps} {
   Algebrick::Vec3d r1 = *points[1] - *points[0];
   Algebrick::Vec3d r2 = *points[2] - *points[0];
-  norm = r1.cross(r2).norm();
+  norm = -r1.cross(r2).norm();
 }
 
 TriangularPlane::TriangularPlane(
@@ -22,7 +22,7 @@ TriangularPlane::TriangularPlane(
     : points{ps}, intensity{i} {
   Algebrick::Vec3d r1 = *points[1] - *points[0];
   Algebrick::Vec3d r2 = *points[2] - *points[0];
-  norm = r1.cross(r2).norm();
+  norm = -r1.cross(r2).norm();
 }
 
 std::optional<RayLenObj>
