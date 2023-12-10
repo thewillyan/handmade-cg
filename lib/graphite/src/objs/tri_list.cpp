@@ -29,6 +29,7 @@ void TriList::add_face(std::array<Algebrick::Point3d, 3> ps,
   }
 
   auto face = TriangularPlane{p_ptrs, i};
+  face.set_container_obj(this);
   faces.emplace_back(face);
 }
 
