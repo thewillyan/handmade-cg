@@ -7,6 +7,7 @@
 #include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/texture.hpp"
 #include "object.hpp"
+#include <memory>
 #include <optional>
 
 namespace Graphite::Object {
@@ -20,7 +21,7 @@ private:
 
   SDL_Color color;
   ObjectIntensity intensity;
-  Texture *texture;
+  std::shared_ptr<Texture> texture;
 
 public:
   Plane(Algebrick::Point3d p, Algebrick::Vec3d n, SDL_Color c, double s);
@@ -40,7 +41,7 @@ public:
 
   // setters
   void set_reflection(double k);
-  void set_texture(Texture *t);
+  void set_texture(const std::shared_ptr<Texture> &t);
 };
 } // namespace Graphite::Object
 

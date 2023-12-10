@@ -79,7 +79,7 @@ ObjectIntensity Plane::get_intensity(const Algebrick::Point3d &p) const {
   int j = static_cast<int>(paxis_y * (p - point));
   return {texture->get_color(i, j), intensity.get_shineness()};
 }
-void Plane::set_texture(Texture *t) { texture = t; }
+void Plane::set_texture(const std::shared_ptr<Texture> &t) { texture = t; }
 
 void Plane::translate(const Algebrick::Vec3d &offset) { point += offset; }
 void Plane::scale([[maybe_unused]] double k) {
