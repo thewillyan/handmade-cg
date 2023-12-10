@@ -4,6 +4,7 @@
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/plane.hpp"
 #include "graphite/include/texture.hpp"
+#include <memory>
 #include <vector>
 
 Graphite::Object::Plane *get_floor() {
@@ -25,10 +26,12 @@ Graphite::Object::Plane *get_wall(const Algebrick::Point3d &p,
 std::vector<Graphite::Object::Object *> get_room() {
 
   SDL_Surface *wood_image = IMG_Load("../textures/oak_floor.jpg");
-  auto *wood_texture = new Graphite::Texture(wood_image);
+  auto wood_texture =
+      std::make_shared<Graphite ::Texture>(Graphite::Texture(wood_image));
 
   SDL_Surface *brick_image = IMG_Load("../textures/dragfaced_brick.jpg");
-  auto *brick_texture = new Graphite::Texture(brick_image);
+  auto brick_texture =
+      std::make_shared<Graphite::Texture>(Graphite::Texture(brick_image));
 
   auto floor = get_floor();
   floor->set_texture(wood_texture);

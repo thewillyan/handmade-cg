@@ -12,6 +12,7 @@
 #include <SDL_stdinc.h>
 #include <SDL_surface.h>
 #include <cstddef>
+#include <memory>
 
 const size_t WIN_WIDTH = 500;
 const size_t WIN_HEIGHT = 500;
@@ -23,12 +24,12 @@ int main() {
 
   // create wall
   SDL_Surface *img = IMG_Load("../textures/mine.png");
-  auto *t = new Graphite::Texture(img);
   Graphite::Light::Intensity no_ambient{0, 0, 0};
   Graphite::Light::Intensity wall_k{0.3, 0.3, 0.7};
   SDL_Color wall_color = {0, 0, 0, 255};
   auto *wall = new Graphite::Object::Plane({0, 0, -200}, {0, 0, 1}, wall_color,
                                            1, wall_k, wall_k, no_ambient);
+  auto t = std::make_shared<Graphite::Texture>(Graphite::Texture(img));
   wall->set_texture(t);
 
   // create spotlight
