@@ -1,8 +1,12 @@
 #include "algebrick/include/point3d.hpp"
+#include "graphite/include/intensity.hpp"
+#include "graphite/include/objs/box.hpp"
 #include "graphite/include/objs/cilinder.hpp"
 #include "graphite/include/objs/cone.hpp"
+#include "graphite/include/objs/obj_intensity.hpp"
 #include "graphite/include/objs/object.hpp"
 #include "graphite/include/objs/sphere.hpp"
+#include <memory>
 
 void get_santa_tree(std::vector<Graphite::Object::Object *> *objects) {
   double z_distance = 180;
@@ -43,7 +47,7 @@ void add_pub_chair(const Algebrick::Point3d &pos,
   double seat_radius = 30;
   double seat_height = 10;
   double seat_y = -100;
-  Graphite::Light::Intensity seat_k{0.212, 0.176, 0.176};
+  Graphite::Light::Intensity seat_k{0, 0, 0};
   Algebrick::Point3d seat_center = {pos.x, seat_y, pos.z};
   Algebrick::Vec3d seat_dir = {0, 1, 0};
   double shininess = 10;
@@ -62,12 +66,26 @@ void add_pub_chair(const Algebrick::Point3d &pos,
   objects->push_back(support);
 }
 
+void get_table(std::vector<Graphite::Object::Object *> *objects) {
+  auto obj_intensity = std::make_shared<Graphite::Object::ObjectIntensity>(
+      10, Graphite::Light::Intensity{0.212, 0.176, 0.176},
+      Graphite::Light::Intensity{0.212, 0.176, 0.176},
+      Graphite::Light::Intensity{0.212, 0.176, 0.176});
+  auto table = Graphite::Object::Box::create_paralellepiped(
+      {-150, -100, 100}, 50, 100, 2000, obj_intensity);
+
+  objects->push_back(table);
+}
+
 std::vector<Graphite::Object::Object *> get_objects() {
 
   std::vector<Graphite::Object::Object *> objects;
   get_santa_tree(&objects);
+
   add_pub_chair({-100, 0, 100}, &objects);
   add_pub_chair({-100, 0, 170}, &objects);
   add_pub_chair({-100, 0, 30}, &objects);
+
+  get_table(&objects);
   return objects;
 }
