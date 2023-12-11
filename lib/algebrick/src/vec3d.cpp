@@ -1,10 +1,11 @@
-#include "vec3d.h"
+#include "../include/vec3d.hpp"
 #include <cmath>
 #include <ostream>
 
 using namespace Algebrick;
 
 // constructors
+Vec3d::Vec3d() : x{0}, y{0}, z{0} {}
 Vec3d::Vec3d(double a, double b, double c) : x{a}, y{b}, z{c} {}
 
 // plus
@@ -59,6 +60,13 @@ void Vec3d::direct_mul_assign(const Vec3d &other) {
 double Vec3d::length() const { return std::sqrt((*this) * (*this)); }
 Vec3d Vec3d::norm() const { return (*this) / this->length(); }
 void Vec3d::norm_assign() { *this /= (this->length()); }
+Vec3d Vec3d::cross(const Vec3d &other) const {
+  return Vec3d{
+      (y * other.z) - (z * other.y),
+      (z * other.x) - (x * other.z),
+      (x * other.y) - (y * other.x),
+  };
+}
 
 std::ostream &Algebrick::operator<<(std::ostream &out, const Vec3d &v) {
   return out << '[' << v.x << ',' << v.y << ',' << v.z << ']';
