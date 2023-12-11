@@ -64,7 +64,7 @@ Intensity Directed::get_intensity(const Object::Object &inter_obj,
 
 void Directed::transform(const Algebrick::Matrix &m) {
   Algebrick::Matrix direction_4d = {
-      {direction.x}, {direction.y}, {direction.z}, {1.0}};
+      {direction.x}, {direction.y}, {direction.z}, {0.0}};
   Algebrick::Matrix new_direction = m * direction_4d;
   direction = {new_direction.get(0, 0), new_direction.get(1, 0),
                new_direction.get(2, 0)};

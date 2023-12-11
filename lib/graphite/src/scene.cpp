@@ -83,10 +83,8 @@ void Scene::render(Canvas &c) const {
   const double half_dx = dx / 2;
   const double half_dy = dy / 2;
 
-  if (mode == RenderMode::PERSPECTIVE) {
-    Algebrick::Matrix perspective = eye_pov.perspective_matrix();
-    space->set_transform(perspective);
-  }
+  Algebrick::Matrix perspective = eye_pov.perspective_matrix();
+  space->set_transform(perspective);
 
   for (size_t i = 0; i < c.get_width(); ++i) {
     const double x = -half_w + half_dx + static_cast<double>(i) * dx;
