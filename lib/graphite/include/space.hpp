@@ -32,6 +32,7 @@ public:
   void set_transform(Algebrick::Matrix m);
   void reset_transform();
 
+  std::optional<Object::RayLenObj> raycast(const Algebrick::Ray &ray) const;
   Light::Intensity light_intensity(const Object::Object &obj,
                                    const Algebrick::Point3d &inter_point,
                                    const Algebrick::Ray &eye_ray) const;

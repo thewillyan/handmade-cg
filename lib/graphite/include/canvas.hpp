@@ -2,12 +2,14 @@
 #define Graphite_Render_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_video.h>
 #include <cstddef>
-#include <initializer_list>
+#include <functional>
 #include <map>
+#include <optional>
 #include <vector>
 
 namespace Graphite {
@@ -23,6 +25,8 @@ struct cmpColors {
   }
 };
 
+enum class State { Continue, Refresh, Quit };
+
 class Canvas {
 private:
   const size_t width;
@@ -33,6 +37,8 @@ private:
   std::map<SDL_Color, std::vector<SDL_Point>, cmpColors> color_map;
   SDL_Window *window;
   SDL_Renderer *renderer;
+  std::optional<std::function<State(const SDL_Event &, Canvas &)>>
+      event_handler;
 
 public:
   // contructor
@@ -61,13 +67,14 @@ public:
   void set_pov_width(size_t);
   void set_pov_height(size_t);
   void set_pixel(SDL_Point, SDL_Color);
+  void set_handler(std::function<State(const SDL_Event &, Canvas &)>);
 
   // methods
   void fill(SDL_Color);
   void zoom_in(double = 1.1);
   void zoom_out(double = 1.1);
   void clear();
-  void draw() const;
+  void draw();
 };
 } // namespace Graphite
 #endif // !Graphite_Render_H

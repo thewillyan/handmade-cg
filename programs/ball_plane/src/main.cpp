@@ -47,11 +47,13 @@ int main() {
   objs.set_ambient_light({0.3, 0.3, 0.3});
   objs.add_light(light);
   auto scene = Graphite::Scene(&objs);
+  scene.set_canvas_dist(canvas_dist);
   scene.set_bg_color({255, 255, 255, 255});
-  scene.set_eye_pov({{50, 80, 0}, {50, 100, -2}, center});
+  // scene.set_eye_pov({{50, 80, 0}, {50, 100, -2}, center});
 
   // render
-  scene.render(canvas, canvas_dist);
+  scene.render(canvas);
+  canvas.set_handler(Graphite::SceneEventHandler(&scene));
   canvas.draw();
   return 0;
 }

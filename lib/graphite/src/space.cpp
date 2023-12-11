@@ -31,37 +31,55 @@ Light::Intensity Space::light_intensity(const Object::Object &obj,
                                         const Algebrick::Ray &eye_ray) const {
   Object::ObjectIntensity oi = obj.get_intensity(inter_point);
   Light::Intensity total = (ambient_light * oi.get_ambient_intensity());
+  std::vector<Object::Object *> visible_objs;
+  for (Object::Object *o : objs) {
+    if (o->is_visible()) {
+      visible_objs.emplace_back(o);
+    }
+  }
+
   for (auto l : lights) {
-    total = total + l->get_intensity(obj, objs, inter_point, eye_ray);
+    total = total + l->get_intensity(obj, visible_objs, inter_point, eye_ray);
   }
   return total;
 }
 void Space::set_transform(Algebrick::Matrix m) {
-  // TODO: invert transform
   for (Object::Object *obj : objs) {
     obj->transform(m);
   }
   for (Light::Source *l : lights) {
     l->transform(m);
   }
+  transform = std::move(m);
 }
 void Space::reset_transform() {
   Algebrick::Matrix inv = Algebrick::Matrix::inv(transform);
   for (Object::Object *obj : objs) {
     obj->transform(inv);
   }
+  for (Light::Source *l : lights) {
+    l->transform(inv);
+  }
 }
-
-std::optional<SDL_Color> Space::intersect(const Algebrick::Ray &ray) const {
+std::optional<Object::RayLenObj>
+Space::raycast(const Algebrick::Ray &ray) const {
   std::optional<Object::RayLenObj> ro{};
   double op_len = INFINITY;
   for (const Graphite::Object::Object *obj : objs) {
+    if (!obj->is_visible()) {
+      continue;
+    }
     std::optional<Object::RayLenObj> inter = obj->intersect(ray);
     if (inter.has_value() && op_len > inter->first) {
       ro = std::move(inter);
       op_len = ro->first;
     }
   }
+  return ro;
+}
+
+std::optional<SDL_Color> Space::intersect(const Algebrick::Ray &ray) const {
+  std::optional<Object::RayLenObj> ro = raycast(ray);
   if (!ro.has_value()) {
     return {};
   }

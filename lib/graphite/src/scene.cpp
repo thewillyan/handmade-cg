@@ -47,17 +47,21 @@ Scene::Scene(Space *s, RenderMode m)
 Scene::~Scene() {}
 
 // getters
+const FrameRef &Scene::get_pov() const { return eye_pov; }
+const Space &Scene::get_space() const { return *space; }
 Space &Scene::get_space() { return *space; }
 std::optional<SDL_Color> Scene::get_bg_color() const { return bg; }
+double Scene::get_canvas_dist() const { return canvas_dist; }
 
 // setters
+void Scene::set_canvas_dist(double d) { canvas_dist = d; }
 void Scene::set_space(Space *s) { space = s; }
 void Scene::set_bg_color(SDL_Color color) { bg = color; }
 void Scene::set_render_mode(const RenderMode m) { mode = m; }
 void Scene::set_eye_pov(FrameRef &&pov) { eye_pov = pov; }
 void Scene::set_oblique_dir(const Algebrick::Vec3d &vec) { oblique_dir = vec; }
 
-void Scene::render(Canvas &c, double d) const {
+void Scene::render(Canvas &c) const {
   const double pov_w = c.get_pov_width();
   const double pov_h = c.get_pov_height();
   const double half_w = static_cast<double>(pov_w) / 2;
@@ -78,7 +82,7 @@ void Scene::render(Canvas &c, double d) const {
       const double y = half_h - half_dy - static_cast<double>(j) * dy;
       // center point of an canvas "block"
       Algebrick::Ray const *ray;
-      Algebrick::Point3d p{x, y, -d};
+      Algebrick::Point3d p{x, y, -canvas_dist};
 
       switch (mode) {
       case RenderMode::PERSPECTIVE: {
