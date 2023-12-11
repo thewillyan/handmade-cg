@@ -53,6 +53,18 @@ Space &Scene::get_space() { return *space; }
 std::optional<SDL_Color> Scene::get_bg_color() const { return bg; }
 double Scene::get_canvas_dist() const { return canvas_dist; }
 
+Algebrick::Ray Scene::ray_to(const Algebrick::Point3d &p) const {
+  switch (mode) {
+  case RenderMode::PERSPECTIVE:
+    return Algebrick::Ray{{0, 0, 0}, p};
+  case RenderMode::ORTHOGRAPHIC: {
+    return Algebrick::Ray{p, -eye_pov.z_axis()};
+  }
+  case RenderMode::OBLIQUE:
+    return Algebrick::Ray{p, oblique_dir};
+  }
+}
+
 // setters
 void Scene::set_canvas_dist(double d) { canvas_dist = d; }
 void Scene::set_space(Space *s) { space = s; }
@@ -81,22 +93,9 @@ void Scene::render(Canvas &c) const {
     for (size_t j = 0; j < c.get_height(); ++j) {
       const double y = half_h - half_dy - static_cast<double>(j) * dy;
       // center point of an canvas "block"
-      Algebrick::Ray const *ray;
       Algebrick::Point3d p{x, y, -canvas_dist};
+      Algebrick::Ray *ray = new Algebrick::Ray{ray_to(p)};
 
-      switch (mode) {
-      case RenderMode::PERSPECTIVE: {
-        ray = new Algebrick::Ray{{0, 0, 0}, p};
-        break;
-      }
-      case RenderMode::ORTHOGRAPHIC: {
-        ray = new Algebrick::Ray{p, -eye_pov.z_axis()};
-        break;
-      }
-      case RenderMode::OBLIQUE:
-        ray = new Algebrick::Ray{p, oblique_dir};
-        break;
-      }
       std::optional<SDL_Color> point_color = space->intersect(*ray);
 
       SDL_Point canvas_point{static_cast<int>(i), static_cast<int>(j)};

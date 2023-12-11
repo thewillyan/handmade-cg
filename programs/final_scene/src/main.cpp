@@ -39,7 +39,9 @@ int main() {
   scene.set_eye_pov({{0, 0, 0}, {0, 100, 10}, {0, 0, 100}});
   canvas.zoom_in(1.5);
 
-  scene.render(canvas, canvas_dist);
+  scene.set_canvas_dist(canvas_dist);
+  scene.render(canvas);
+  canvas.set_handler(Graphite::SceneEventHandler(&scene));
   canvas.draw();
   return 0;
 }

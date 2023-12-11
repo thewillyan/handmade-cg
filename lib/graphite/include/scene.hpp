@@ -57,6 +57,7 @@ public:
   Space &get_space();
   std::optional<SDL_Color> get_bg_color() const;
   double get_canvas_dist() const;
+  Algebrick::Ray ray_to(const Algebrick::Point3d &p) const;
 
   // setters
   void set_canvas_dist(double);
@@ -68,7 +69,6 @@ public:
 
   // getters
   const FrameRef &get_pov() const;
-
   void render(Canvas &) const;
 };
 
@@ -81,10 +81,9 @@ public:
   inline State operator()(const SDL_Event &event, Canvas &canvas) const {
     switch (event.type) {
     case SDL_MOUSEBUTTONUP: {
-      Algebrick::Ray ray{Algebrick::Point3d{static_cast<double>(event.button.x),
-                                            static_cast<double>(event.button.y),
-                                            scene->get_canvas_dist()},
-                         -scene->get_pov().z_axis()};
+      Algebrick::Ray ray = scene->ray_to(Algebrick::Point3d{
+          static_cast<double>(event.button.x),
+          static_cast<double>(event.button.y), -scene->get_canvas_dist()});
 
       std::optional<Object::RayLenObj> inter = scene->get_space().raycast(ray);
       if (inter.has_value()) {
