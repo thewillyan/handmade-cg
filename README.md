@@ -12,17 +12,14 @@ the libraries available here.
 
 Dependencies:
 
-- clang++ / g++ (compiler)
+- clang++ (compiler)
 - SDL2 (developer headers)
+- SDL2_image (developer headers)
+- OpenBLAS (developer headers)
+- Assimp (developer headers)
 
 To build a project with clang++ compiler execute the following command:
 
 ```
-$ make
-```
-
-To build a project with g++ compiler run:
-
-```
-$ make CXX=g++
+$ cmake . && make
 ```
