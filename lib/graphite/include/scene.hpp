@@ -81,9 +81,21 @@ public:
   inline State operator()(const SDL_Event &event, Canvas &canvas) const {
     switch (event.type) {
     case SDL_MOUSEBUTTONUP: {
-      Algebrick::Ray ray = scene->ray_to(Algebrick::Point3d{
-          static_cast<double>(event.button.x),
-          static_cast<double>(event.button.y), -scene->get_canvas_dist()});
+      const double pov_w = canvas.get_pov_width();
+      const double pov_h = canvas.get_pov_height();
+      const double half_w = static_cast<double>(pov_w) / 2;
+      const double half_h = static_cast<double>(pov_h) / 2;
+      const double dx = pov_w / canvas.get_width();
+      const double dy = pov_h / canvas.get_height();
+      const double half_dx = dx / 2;
+      const double half_dy = dy / 2;
+      const double x =
+          -half_w + half_dx + static_cast<double>(event.button.x) * dx;
+      const double y =
+          half_h - half_dy - static_cast<double>(event.button.y) * dy;
+      Algebrick::Ray ray = scene->ray_to(
+          Algebrick::Point3d{static_cast<double>(x), static_cast<double>(y),
+                             -scene->get_canvas_dist()});
 
       std::optional<Object::RayLenObj> inter = scene->get_space().raycast(ray);
       if (inter.has_value()) {
